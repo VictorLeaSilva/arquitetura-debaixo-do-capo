@@ -1,0 +1,10 @@
+# Configuração da aplicação do laboratório (T-001: só o mínimo).
+spring:
+  application:
+    name: arquitetura-debaixo-do-capo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
