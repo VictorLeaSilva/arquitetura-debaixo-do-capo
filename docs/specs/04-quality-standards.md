@@ -11,7 +11,7 @@ Princípio: **o CI é a autoridade**; hooks locais só aceleram o feedback. Nenh
 |---|---|---|---|
 | G1 local | antes do commit (opcional, manual) | formatador (`spotless:apply`), `doc-lint.sh` | Nada (é atalho; o CI repete tudo) |
 | G2 build completo | local e CI | formatação, análise estática, testes unitários, arquitetura, integração (Testcontainers), cobertura; no front-end: lint, tipos, testes; no site: build e `doc-lint.sh` | PR |
-| G3 CI complementar | PR | detector de segredos, revisão de dependências (CVE), varredura das imagens Docker, verificador do `compose.yaml` (tags fixas, portas em `127.0.0.1`) | PR |
+| G3 CI complementar | PR | detector de segredos, revisão de dependências (CVE); a partir da T-004, varredura das imagens Docker e verificador do `compose.yaml` (tags fixas, portas em `127.0.0.1`) | PR |
 | G4 manual | antes de publicar um post | carga medida (RNF-007, RNF-008), JMH (diferencial), mutação (opcional) | Relatório |
 | G5 release do MVP | tag `mvp-1.0` | auditoria de rastreabilidade, README executado nos dois shells | Release |
 
@@ -20,10 +20,10 @@ Sem hook obrigatório de pré-commit: o framework mais comum para isso depende d
 ## 2. Ferramentas e limites
 | Ferramenta | Papel | Regra de falha |
 |---|---|---|
-| Spotless + Palantir Java Format (a confirmar na T-002) | Formatação única do Java | Qualquer diferença |
-| Análise estática do Java: SpotBugs ou Error Prone (escolha na T-002, conforme o suporte a Java 25) | Bugs comuns | Achado de prioridade alta ou média |
-| ArchUnit | Fronteiras de RNF-004 | Qualquer violação |
-| JaCoCo | Cobertura | Piso de 70% de linhas no total e 90% nos pacotes `..inventory..` e `..ordering..` [meta] |
+| Spotless 3.11.0 + Palantir Java Format 2.102.0 | Formatação única do Java | Qualquer diferença |
+| SpotBugs 4.10.5 (plugin 4.10.5.0, Q-015) | Bugs comuns, no bytecode | Achado de prioridade alta ou média |
+| ArchUnit 1.5.1 | Fronteiras de RNF-004 | Qualquer violação |
+| JaCoCo 0.8.16 | Cobertura | Piso de 70% de linhas no total e 90% nos pacotes `..inventory..` e `..ordering..` [meta] |
 | ESLint + Prettier + `tsc --noEmit` | Lint, formatação e tipos do front-end e do site | Qualquer erro |
 | Vitest (cobertura v8) | Testes do front-end | Teste falhando; piso de 70% de linhas [meta] |
 | `scripts/doc-lint.sh` | Estrutura das páginas de estudo (AC-010.2, AC-010.3) | Seção ausente; bloco de terminal fora das abas `shell`; bloco sem linguagem |

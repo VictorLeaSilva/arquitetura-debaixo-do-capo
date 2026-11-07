@@ -90,3 +90,7 @@ Aprendidas nas tarefas; valem para qualquer agente. Acrescente uma linha por arm
 - **Git é do autor:** o push exige as credenciais do autor; o agente nunca faz commit, push, checkout ou pull, apenas entrega os comandos. (2026-11-07)
 - **Scripts `.sh` no Windows:** rodam pelo Git Bash (`bash scripts/x.sh`); o Python não está instalado na máquina do autor, então os scripts do harness não podem depender dele. (2026-11-07)
 - **Windows PowerShell 5.1:** não tem `&&` nem `||` (use `;` e `if ($?)`), e `Set-Content`/`Add-Content` gravam em ANSI por padrão: passar `-Encoding utf8` em comandos de documentação que gravam arquivos. (2026-11-07)
+- **Bit de execução no Windows:** o git do Windows não lê a permissão de execução do disco (`core.fileMode=false`). Scripts como `backend/mvnw` precisam de `git add --chmod=+x`; sem isso, `./mvnw` falha com "Permission denied" no Linux e no CI. (T-001, 2026-11-07)
+- **`eol=crlf` no `.gitattributes`:** o índice do git guarda LF; o CRLF aparece só na pasta de trabalho, depois do checkout (`i/lf w/crlf`). (T-001, Q-014)
+- **Mockito no JDK 21+:** sem configuração, o Mockito se carrega como agente dinâmico e o JDK imprime `WARNING: A Java agent has been loaded dynamically`. A correção é passar o Mockito como `-javaagent` no surefire (T-002, Q-013).
+- **Gate sem `scripts/sdd.conf`:** o item 1 (build) do `verify-task.sh` vira `true` e não compila nada; até a T-003 criar o `sdd.conf`, o build é reproduzido à mão e registrado na evidência. (T-001)
