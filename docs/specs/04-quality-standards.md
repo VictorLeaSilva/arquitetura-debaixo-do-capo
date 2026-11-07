@@ -40,17 +40,17 @@ Sem hook obrigatório de pré-commit: o framework mais comum para isso depende d
 ### 3.1 Testes de risco obrigatórios (na forma exigida)
 | Risco | Forma exigida | Tarefa |
 |---|---|---|
-| Venda acima do estoque na versão correta | 200 compradores **simultâneos** (liberados por latch), PostgreSQL real, 20 repetições sem nenhum `oversold` > 0 (AC-007.3) | Fase 2 (tarefa definida no `/sdd-planejar`) |
-| A versão ingênua não demonstra o erro de forma estável | Barreira de teste da `RaceWindow` (Q-006), leitura e gravação em transações separadas, 20 de 20 repetições com `oversold` > 0 (AC-007.2) | Fase 2 |
-| Duas execuções simultâneas contaminando as medições | Experimento `test-blocking` segurando a trava + um segundo `POST`: `409`; depois, `201` (AC-003.8) | Fase 1 |
-| Trava presa depois de uma falha | Experimento `test-failing`; a execução seguinte recebe `201` (AC-003.9) | Fase 1 |
-| Contagem de SQL errada no N+1 | PostgreSQL real; o número exato de comandos por versão (AC-006.1–AC-006.3) | Fase 1 |
-| Versões "comparadas" com entradas diferentes | Teste de equivalência por `checksum` (RNF-002) | Fase 1 e Fase 2 |
-| Carga de dados não determinística | Duas cargas em bancos diferentes; comparação de um produto e dos atributos (AC-001.3) | Fase 1 |
-| Carga pela metade depois de uma queda | `SeedFailpoint` lançando exceção entre produtos e atributos; nada confirmado; reinício completo (AC-001.5) | Fase 1 |
-| Execuções publicadas apagadas por uma recarga | Recarga com outro `LAB_SEED_PRODUCTS`; as linhas de `lab_run` continuam (AC-001.6) | Fase 1 |
+| Venda acima do estoque na versão correta | 200 compradores **simultâneos** (liberados por latch), PostgreSQL real, 20 repetições sem nenhum `oversold` > 0 (AC-007.3) | T-020 |
+| A versão ingênua não demonstra o erro de forma estável | Barreira de teste da `RaceWindow` (Q-006), leitura e gravação em transações separadas, 20 de 20 repetições com `oversold` > 0 (AC-007.2) | T-021 |
+| Duas execuções simultâneas contaminando as medições | Experimento `test-blocking` segurando a trava + um segundo `POST`: `409`; depois, `201` (AC-003.8) | T-012 |
+| Trava presa depois de uma falha | Experimento `test-failing`; a execução seguinte recebe `201` (AC-003.9) | T-012 |
+| Contagem de SQL errada no N+1 | PostgreSQL real; o número exato de comandos por versão (AC-006.1–AC-006.3) | T-014 |
+| Versões "comparadas" com entradas diferentes | Teste de equivalência por `checksum` (RNF-002) | T-013, T-014 |
+| Carga de dados não determinística | Duas cargas em bancos diferentes; comparação de um produto e dos atributos (AC-001.3) | T-010 |
+| Carga pela metade depois de uma queda | `SeedFailpoint` lançando exceção entre produtos e atributos; nada confirmado; reinício completo (AC-001.5) | T-010 |
+| Execuções publicadas apagadas por uma recarga | Recarga com outro `LAB_SEED_PRODUCTS`; as linhas de `lab_run` continuam (AC-001.6) | T-010 |
 
-As colunas "Tarefa" são preenchidas com os IDs T-0xx pelo `/sdd-planejar`, quando as Fases 1 e 2 forem detalhadas.
+Cada tarefa é detalhada pelo `/sdd-planejar` antes de começar, com o teste de risco na forma exigida.
 
 ## 4. Segurança
 - OWASP API Security Top 10 (2023), aplicado ao que existe no MVP:
