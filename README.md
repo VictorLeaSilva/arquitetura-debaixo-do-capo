@@ -22,9 +22,9 @@ cd backend
 .\mvnw.cmd -q verify
 ```
 
-O `-q` (*quiet*) esconde o log normal do Maven. O comando deu certo quando termina com código de saída `0` (confira com `echo $?` no bash ou `$LASTEXITCODE` no PowerShell) e sem nenhuma linha `[ERROR]`.
+O `-q` (*quiet*) esconde o log normal do Maven, mas não o da aplicação: durante os testes, o Spring Boot sobe e imprime algumas linhas de log próprias. O comando deu certo quando termina com código de saída `0` (confira com `echo $?` no bash ou `$LASTEXITCODE` no PowerShell) e sem nenhuma linha `[ERROR]`.
 
-Hoje aparecem algumas linhas `WARNING: A Java agent has been loaded dynamically` durante os testes. Elas são um aviso do JDK sobre a forma como a biblioteca de testes Mockito se instala, e não um erro. A configuração que elimina esse aviso está prevista na tarefa de gates de qualidade (T-002).
+Hoje aparecem também algumas linhas `WARNING: A Java agent has been loaded dynamically`. Elas são um aviso do JDK sobre a forma como a biblioteca de testes Mockito se instala, e não um erro. A configuração que elimina esse aviso está prevista na tarefa de gates de qualidade (T-002).
 
 ## Licenças
 
