@@ -42,7 +42,7 @@ Depois do MVP, cada fatia do roadmap (DP-13) repete este ciclo com a sua própri
 | Área | Escolha | Observação |
 |------|---------|------------|
 | Linguagem | Java 25 (LTS) | Instalado na máquina do autor: 25.0.5 [fato: `java -version`, 2026-11-07]. Fallback só com ADR |
-| Framework | Spring Boot | Versão estável mais recente compatível com Java 25, confirmada e pinada na T-001 (A3) |
+| Framework | Spring Boot 4.1.2 | Versão GA mais recente em 2026-11-07, com suporte a Java 25 (A3); pinada na T-001 |
 | Build | Maven, via Maven Wrapper (`mvnw` / `mvnw.cmd`) | Q-004. Ninguém precisa instalar o Maven; versões pinadas |
 | Persistência | PostgreSQL | MongoDB e Cassandra só na fatia 6 (dados distribuídos). Versão da imagem pinada na T-004 |
 | Testes | JUnit + AssertJ (versões do BOM do Spring Boot); Testcontainers para integração; ArchUnit para arquitetura; teste concorrente para F4; JMH (diferencial); Vitest no front-end | `04-quality-standards.md` |
@@ -93,7 +93,7 @@ Monólito modular, com um módulo por domínio (`01-domain-capabilities.md`). A 
 |---|----------|
 | A1 | H-02 ("construir e medir ensina mais do que ler") é aceita como premissa e não será testada agora [DP-20]. |
 | A2 | O ambiente de referência das medições é a máquina do autor: 16 GB de RAM, ~7,6 GB para o Docker, 12 CPUs lógicas, Windows 11 com Docker Desktop [fato: medido em 2026-11-07]. Toda medição publicada cita esse ambiente. |
-| A3 | Existe uma versão estável do Spring Boot com suporte a Java 25. **A confirmar** na T-001, nas notas de versão oficiais. |
+| A3 | **Confirmada em 2026-11-07:** o Spring Boot 4.1.2 é a versão GA mais recente (marcada "Latest" em github.com/spring-projects/spring-boot/releases, de 22/10/2026) e suporta Java 25; a 4.2.0 ainda está em RC. A T-001 fixa a 4.1.2. |
 | A4 | O leitor sabe lógica de programação e Java básico [DP-09]. |
 | A5 | Ninguém paga nem se cadastra: sem login, sem pagamento, sem multiusuário [DP-06, DP-21]. |
 
