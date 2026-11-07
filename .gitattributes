@@ -1,0 +1,22 @@
+# Fim de linha padronizado para o projeto inteiro.
+# Explicação completa: o Windows termina cada linha com CRLF (\r\n); Linux e macOS, com LF (\n).
+# Este arquivo vale para todos que clonarem o repositório e tem prioridade sobre a configuração
+# pessoal core.autocrlf de cada máquina.
+
+# Todo arquivo de texto é guardado no repositório E entregue na pasta de trabalho com LF.
+# Motivo: scripts bash, arquivos copiados para containers Linux e o Docker quebram com CRLF.
+* text=auto eol=lf
+
+# Exceção: scripts do Prompt de Comando do Windows (.bat/.cmd, como o mvnw.cmd) exigem CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Arquivos binários: o Git não deve tentar converter nada neles.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.jar  binary
+*.zip  binary

@@ -1,0 +1,30 @@
+# Material pessoal de estudo (contém informações de carreira) — nunca versionar
+Guia_Conceitos_Tecnicos_Arquitetura*.pdf
+
+# Java / Maven
+target/
+*.class
+*.log
+hs_err_pid*
+
+# Node / front / docs
+node_modules/
+dist/
+build/
+.docusaurus/
+coverage/
+
+# IDEs e sistema operacional
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Variáveis de ambiente locais (segredos nunca vão para o repositório)
+.env
+.env.*
+!.env.example
+
+# Bastidores (privado; nunca vai para o repositório público)
+.bastidores/
