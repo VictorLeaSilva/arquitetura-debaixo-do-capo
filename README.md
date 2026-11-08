@@ -33,6 +33,8 @@ O `verify` não só compila e testa: ele também **reprova o build** quando enco
 - cobertura de testes abaixo do piso (JaCoCo: 70% das linhas);
 - violação das regras de arquitetura (ArchUnit).
 
+Durante os testes pode aparecer a linha `Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended`. Ela também não é erro: o Mockito e o JaCoCo entram na JVM como *agentes Java*, e isso desliga parte de uma otimização de inicialização da JVM (o *class data sharing*). O único efeito é os testes subirem um pouco mais devagar.
+
 O relatório de cobertura fica em `backend/target/site/jacoco/index.html`. Se o build reprovar só pela formatação, o próprio Spotless corrige:
 
 ```bash

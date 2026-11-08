@@ -28,6 +28,22 @@ public final class ArchitectureRules {
 
     private static final String LAB = "lab";
 
+    /** Pacote base do código de produção (Q-012). */
+    static final String PRODUCTION_BASE = "io.github.victorleasilva.capo";
+
+    /** AC-RNF-004.1, aplicada ao código de produção. */
+    public static final ArchRule DOMAIN_IS_FRAMEWORK_FREE = domainIsFrameworkFree(PRODUCTION_BASE);
+
+    /** AC-RNF-004.2, aplicada ao código de produção. */
+    public static final ArchRule EXPERIMENT_ONLY_FROM_LAB_OR_EXPERIMENT =
+            experimentOnlyFromLabOrExperiment(PRODUCTION_BASE);
+
+    /** AC-RNF-004.3, aplicada ao código de produção. */
+    public static final ArchRule MODULES_TALK_ONLY_THROUGH_API = modulesTalkOnlyThroughApi(PRODUCTION_BASE);
+
+    /** AC-RNF-004.4, aplicada ao código de produção. */
+    public static final ArchRule NO_FLOATING_POINT_MONEY = noFloatingPointMoney(PRODUCTION_BASE);
+
     private ArchitectureRules() {}
 
     /** AC-RNF-004.1: o domínio do estoque e do pedido não depende de framework. */
