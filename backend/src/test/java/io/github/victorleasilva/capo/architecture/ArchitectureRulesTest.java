@@ -13,9 +13,13 @@ import io.github.victorleasilva.archfixtures.catalog.UsesOrderingExperiment;
 import io.github.victorleasilva.archfixtures.catalog.UsesOrderingInternal;
 import io.github.victorleasilva.archfixtures.inventory.domain.PureEntity;
 import io.github.victorleasilva.archfixtures.inventory.domain.SpringDependentEntity;
+import io.github.victorleasilva.archfixtures.inventory.experiment.RawThing;
+import io.github.victorleasilva.archfixtures.inventory.internal.Internal;
 import io.github.victorleasilva.archfixtures.ordering.api.Facade;
 import io.github.victorleasilva.archfixtures.ordering.domain.SpringDependentOrder;
 import io.github.victorleasilva.archfixtures.ordering.experiment.NaiveThing;
+import io.github.victorleasilva.archfixtures.ordering.experiment.UsesInventoryExperiment;
+import io.github.victorleasilva.archfixtures.ordering.experiment.UsesInventoryInternal;
 import io.github.victorleasilva.archfixtures.ordering.internal.Hidden;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -54,6 +58,9 @@ class ArchitectureRulesTest {
         assertThat(violates(
                         rule, io.github.victorleasilva.archfixtures.lab.UsesOrderingExperiment.class, NaiveThing.class))
                 .isFalse();
+        // Um pacote experiment pode usar o experiment de outro módulo.
+        assertThat(violates(rule, UsesInventoryExperiment.class, RawThing.class))
+                .isFalse();
     }
 
     @Test
@@ -62,6 +69,10 @@ class ArchitectureRulesTest {
 
         assertThat(violates(rule, UsesOrderingInternal.class, Hidden.class)).isTrue();
         assertThat(violates(rule, UsesOrderingApi.class, Facade.class)).isFalse();
+        // A sub-regra do pacote experiment de origem: pode usar o experiment do outro, nunca o interno.
+        assertThat(violates(rule, UsesInventoryExperiment.class, RawThing.class))
+                .isFalse();
+        assertThat(violates(rule, UsesInventoryInternal.class, Internal.class)).isTrue();
         assertThat(violates(
                         rule, io.github.victorleasilva.archfixtures.lab.UsesOrderingExperiment.class, NaiveThing.class))
                 .isFalse();

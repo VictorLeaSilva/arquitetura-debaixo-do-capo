@@ -132,13 +132,4 @@ public final class ArchitectureRules {
                 .allowEmptyShould(true)
                 .as("nenhum campo de dinheiro (price, amount, total, cost) é double ou float");
     }
-
-    /** Todas as regras, na ordem dos critérios de aceite. */
-    public static List<ArchRule> all(String base) {
-        return List.of(
-                domainIsFrameworkFree(base),
-                experimentOnlyFromLabOrExperiment(base),
-                modulesTalkOnlyThroughApi(base),
-                noFloatingPointMoney(base));
-    }
 }
