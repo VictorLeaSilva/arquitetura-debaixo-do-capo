@@ -168,7 +168,15 @@ Mecanismo: portas publicadas só em `127.0.0.1`; a API aceita apenas ids e parâ
 - **AC-RNF-011.1** Dado o MVP concluído, quando `docs/produto/publicacoes.md` é examinado, então lista 2 posts publicados (link e data), cada um citando uma medição registrada numa execução (`runId`, data, ambiente).
 - **Prova:** evidência.
 
+### RNF-012 · Gate automático em cada tarefa
+Mecanismo: os scripts do harness versionados em `scripts/` e configurados por `scripts/sdd.conf` (`05 §4`); o CI roda os testes do harness e confere a matriz de rastreabilidade.
+- **AC-RNF-012.1** Dado o repositório, quando `bash scripts/test/run-tests.sh` roda, localmente e no CI, então todos os cenários passam.
+- **AC-RNF-012.2** Dada uma tarefa cujo diff tem um arquivo fora de `allowed_paths`, ou um teste novo sem a marcação do requisito coberto, quando `scripts/verify-task.sh` roda, então reprova no item 2 (escopo) ou no item 4 (rastreabilidade), citando o arquivo ou o requisito.
+- **AC-RNF-012.3** Dada uma dependência, um plugin Maven ou uma GitHub Action nova que não está em `allowed_new_dependencies`, quando `scripts/verify-task.sh` roda, então reprova no item 3, citando a coordenada no formato de Q-016.
+- **AC-RNF-012.4** Dada a matriz `docs/specs/traceability.md` diferente da gerada, quando o CI roda, então o job `harness` falha.
+- **Prova:** testes de script (`# covers: RNF-012`) + CI + evidência da violação proposital.
+
 ## 3. Rastreabilidade
-- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4).
+- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4), RNF-012 (AC-RNF-012.1 a 012.3).
 - **Provados por evidência ou revisão (sem tag):** AC-009.4, AC-010.5, AC-RNF-001.1, RNF-005, AC-RNF-006.2, RNF-007, RNF-008, AC-RNF-009.3 (CI), AC-RNF-009.5, RNF-010, RNF-011.
 - A matriz `docs/specs/traceability.md` é gerada pelo script e versionada.
