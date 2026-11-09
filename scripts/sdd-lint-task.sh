@@ -44,7 +44,7 @@ grep -q '^## Decisões da tarefa' "$ARQ" || aviso "sem '## Decisões da tarefa':
 grep -q '^## Latitude do implementador' "$ARQ" || aviso "sem '## Latitude do implementador': o que ele pode escolher sozinho fica implícito"
 
 # 4. placeholders do modelo (fora de trechos entre crases)
-PH="$(sed -e 's/`[^`]*`//g' "$ARQ" | grep -nE '<[a-zà-ú][^<>]{2,}>')"
+PH="$(sed -e 's/`[^`]*`//g' "$ARQ" | grep -nE '<[[:lower:]][^<>]{2,}>')"
 [ -n "$PH" ] && while read -r l; do erro "placeholder não preenchido: linha $l"; done <<< "$PH"
 
 # 5. AC → teste
