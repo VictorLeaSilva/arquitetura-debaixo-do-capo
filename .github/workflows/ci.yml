@@ -1,4 +1,4 @@
-# CI do projeto (T-002): roda os gates do backend, o detector de segredos e a revisão de dependências.
+# CI do projeto (T-002, T-003): gates do backend, harness SDD, detector de segredos e revisão de dependências.
 # Toda action é fixada pelo SHA do commit da tag (a tag fica no comentário): uma tag pode ser movida, o SHA não.
 name: ci
 
