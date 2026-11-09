@@ -29,11 +29,12 @@ Método: **Spec Driven Development (SDD)** com harness de verificação e revis�
 **README vivo:** se a tarefa muda como subir ou usar a aplicação, o mesmo PR atualiza o `README.md`, e os comandos afetados são executados de novo em bash e em PowerShell, numa stack isolada; a saída real vai para a evidência. Se não muda, o checklist diz "N/A" e o porquê.
 
 ## Comandos
-Disponíveis depois da T-001 (build) e da T-003 (harness):
-- `./mvnw -q verify` — gate completo local do backend: formato, lint, testes, arquitetura, cobertura (detalhes na T-002)
+Os scripts do harness ficam em `scripts/` (T-003) e rodam no Git Bash, no Linux e no macOS; a configuração do projeto está em `scripts/sdd.conf`.
+- `cd backend && ./mvnw -q verify` — gate completo local do backend: formatação, testes, SpotBugs, cobertura e arquitetura (T-002); é também o item 1 do gate (`SDD_BUILD_CMD`)
 - `scripts/sdd-lint-task.sh T-xxx` — a tarefa está pronta para executar? (rode antes de começar)
 - `scripts/sdd-context.sh T-xxx` — o contexto exato da tarefa num só texto (leia isso em vez das specs inteiras)
 - `BASE=<branch base> scripts/verify-task.sh [--rapido] T-xxx` — gate da tarefa (contrato, escopo, dependências, rastreabilidade, padrões, artefatos, build); `--rapido` para iterar, sem ele no fim
 - `scripts/sdd-status.sh` — estado do backlog e próxima tarefa elegível
 - `scripts/check-traceability.sh [--write]` — requisitos obrigatórios sem teste; `--write` regenera `docs/specs/traceability.md`
 - `scripts/test/run-tests.sh` — testes dos scripts do harness
+- `scripts/test/test-sdd-conf.sh` — testes da configuração deste projeto (`sdd.conf`: dependências, plugins e Actions, marcação `# covers:`)

@@ -6,6 +6,8 @@
 # Todo arquivo de texto é guardado no repositório E entregue na pasta de trabalho com LF.
 # Motivo: scripts bash, arquivos copiados para containers Linux e o Docker quebram com CRLF.
 * text=auto eol=lf
+# Explícito, embora a regra acima já garanta: um script de shell com CRLF quebra no Linux.
+*.sh text eol=lf
 
 # Exceção: scripts do Prompt de Comando do Windows (.bat/.cmd, como o mvnw.cmd) exigem CRLF.
 *.bat text eol=crlf
