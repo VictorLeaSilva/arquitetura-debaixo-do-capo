@@ -174,9 +174,17 @@ Mecanismo: os scripts do harness versionados em `scripts/` e configurados por `s
 - **AC-RNF-012.2** Dada uma tarefa cujo diff tem um arquivo fora de `allowed_paths`, ou um teste novo sem a marcação do requisito coberto, quando `scripts/verify-task.sh` roda, então reprova no item 2 (escopo) ou no item 4 (rastreabilidade), citando o arquivo ou o requisito.
 - **AC-RNF-012.3** Dada uma dependência, um plugin Maven ou uma GitHub Action nova que não está em `allowed_new_dependencies`, quando `scripts/verify-task.sh` roda, então reprova no item 3, citando a coordenada no formato de Q-016.
 - **AC-RNF-012.4** Dada a matriz `docs/specs/traceability.md` diferente da gerada, quando o CI roda, então o job `harness` falha.
+- **AC-RNF-012.5** Dado um PR de um branch `task/T-xxx`, quando o checklist de pronto da tarefa tem algum item sem marca ou o relatório `docs/specs/reviews/T-xxx.md` não existe ou não tem veredito PASS/PASS_WITH_NOTES, então o job `pronto` falha e a proteção da `main` impede o merge (Q-022); com tudo completo, o job passa.
 - **Prova:** testes de script (`# covers: RNF-012`) + CI + evidência da violação proposital.
 
+### RNF-013 · Repositório público protegido e apresentável
+Mecanismo: configurações de segurança do GitHub (proteção da `main`, varredura de segredos com bloqueio no push, Dependabot, CodeQL, relato privado de vulnerabilidade, permissões do Actions), arquivos de comunidade e uma apresentação que explique o projeto a quem chega pelo link.
+- **AC-RNF-013.1** Dada a `main`, quando alguém tenta enviar um commit direto, forçar um push ou apagar o branch, então o GitHub recusa; e um PR só pode ser mesclado com os jobs obrigatórios do CI verdes.
+- **AC-RNF-013.2** Dado o repositório, quando um push contém um segredo reconhecido pelo GitHub, então o push é bloqueado; e as análises do CodeQL e os alertas do Dependabot estão ativos.
+- **AC-RNF-013.3** Dado quem chega ao repositório, quando abre a página inicial, então encontra o que é o projeto, por que existe, como rodar, o roteiro, as licenças, como contribuir, como relatar uma vulnerabilidade e o código de conduta; e o link compartilhado mostra a imagem de prévia própria.
+- **Prova:** evidência (configurações conferidas pela API pública do GitHub quando possível e, nas demais, pelo checklist executado pelo autor).
+
 ## 3. Rastreabilidade
-- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4), RNF-012 (AC-RNF-012.1 a 012.3).
-- **Provados por evidência ou revisão (sem tag):** AC-009.4, AC-010.5, AC-RNF-001.1, RNF-005, AC-RNF-006.2, RNF-007, RNF-008, AC-RNF-009.3 (CI), AC-RNF-009.5, RNF-010, RNF-011.
+- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4), RNF-012 (AC-RNF-012.1 a 012.3 e 012.5).
+- **Provados por evidência ou revisão (sem tag):** AC-009.4, AC-010.5, AC-RNF-001.1, RNF-005, AC-RNF-006.2, RNF-007, RNF-008, AC-RNF-009.3 (CI), AC-RNF-009.5, RNF-010, RNF-011, RNF-013.
 - A matriz `docs/specs/traceability.md` é gerada pelo script e versionada.

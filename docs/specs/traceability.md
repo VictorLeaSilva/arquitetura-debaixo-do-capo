@@ -26,3 +26,4 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RNF-010 Registro de horas para avaliar a H-01 | evidência | — | T-001 |
 | RNF-011 Publicação dos resultados (F7) | evidência | — | — |
 | RNF-012 Gate automático em cada tarefa | sim | `scripts/test/test-sdd-conf.sh` | T-003 |
+| RNF-013 Repositório público protegido e apresentável | evidência | — | T-008 |
