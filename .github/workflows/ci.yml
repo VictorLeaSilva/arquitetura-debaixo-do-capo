@@ -1,4 +1,4 @@
-# CI do projeto (T-002, T-003): gates do backend, harness SDD, detector de segredos e revisão de dependências.
+# CI do projeto (T-002 a T-004): gates do backend, harness SDD, verificador do compose, detector de segredos e revisão de dependências.
 # Toda action é fixada pelo SHA do commit da tag (a tag fica no comentário): uma tag pode ser movida, o SHA não.
 name: ci
 
@@ -56,6 +56,12 @@ jobs:
         run: bash scripts/test/test-sdd-conf.sh
       - name: Matriz de rastreabilidade em dia
         run: bash scripts/check-traceability.sh --check-file
+      - name: Testes do verificador do compose.yaml
+        run: bash scripts/test/test-compose-lint.sh
+      - name: compose.yaml com imagens fixas e portas só em 127.0.0.1
+        run: bash scripts/compose-lint.sh
+      - name: Sintaxe do compose.yaml (com os valores do .env.example)
+        run: cp .env.example .env && docker compose --profile mvp config --quiet
 
   dependency-review:
     if: github.event_name == 'pull_request'

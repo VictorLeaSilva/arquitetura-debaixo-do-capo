@@ -18,6 +18,12 @@ Fonte única das versões do projeto (P10, DP-05). Toda página de estudo cita e
 | actions/setup-java | v6.2.0 (`77dd5b2ce225ea11469928ac317850245a74ae78`) | `.github/workflows/ci.yml` | [Releases do actions/setup-java](https://github.com/actions/setup-java/releases) | 2026-11-07 |
 | actions/dependency-review-action | v5.0.0 (`a1d282b36b6f3519aa1f3fc636f609c47dddb294`) | `.github/workflows/ci.yml` | [Releases do dependency-review-action](https://github.com/actions/dependency-review-action/releases) | 2026-11-07 |
 | gitleaks/gitleaks-action | v3.0.0 (`e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e`) | `.github/workflows/ci.yml` | [Releases do gitleaks-action](https://github.com/gitleaks/gitleaks-action/releases) | 2026-11-07 |
+| PostgreSQL (imagem Docker) | 18.6 (`postgres:18.6-trixie`) | `compose.yaml`: serviço `postgres` | [Política de versões do PostgreSQL](https://www.postgresql.org/support/versioning/) e [imagem oficial no Docker Hub](https://hub.docker.com/_/postgres) | 2026-11-09 |
+| Observabilidade (imagem Docker) | 0.40.0 (`grafana/otel-lgtm:0.40.0`) | `compose.yaml`: serviço `observability` | [Releases do docker-otel-lgtm](https://github.com/grafana/docker-otel-lgtm/releases) (marcada "Latest") | 2026-11-09 |
+
+## Particularidades de versão já registradas
+- **PostgreSQL 18:** a imagem oficial passou a guardar os dados em `/var/lib/postgresql/18/docker`, e o volume é montado em `/var/lib/postgresql`. Até a 17, o ponto de montagem era `/var/lib/postgresql/data`; um `compose.yaml` feito para a 17 e usado com a 18 perde os dados a cada recriação do container ([imagem oficial no Docker Hub](https://hub.docker.com/_/postgres)).
 
 ## Próximas versões a acompanhar
 - **Spring Boot 4.2.0:** em 2026-11-07 estava em *release candidate* (4.2.0-RC2, marcada "Pre-release" nas [releases do Spring Boot no GitHub](https://github.com/spring-projects/spring-boot/releases)); a atualização entra por uma tarefa própria, depois do lançamento da versão final.
+- **PostgreSQL 19:** em 2026-11-09 estava em RC1 ("PostgreSQL 19 RC 1 Released!", postgresql.org); a imagem `postgres:19` ainda não tinha tag GA.
