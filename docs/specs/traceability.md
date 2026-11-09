@@ -4,7 +4,7 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 
 | Requisito | Obrigatório com teste | Testes | Tarefas |
 |---|---|---|---|
-| RF-001 Carregar os dados de referência (F1) | sim | — | — |
+| RF-001 Carregar os dados de referência (F1) | sim | `scripts/test/run-tests.sh` `scripts/test/test-sdd-conf.sh` | — |
 | RF-002 Listar e detalhar os experimentos | sim | — | — |
 | RF-003 Executar um experimento | sim | — | — |
 | RF-004 Consultar uma execução | sim | — | — |
@@ -14,15 +14,15 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RF-008 Tela genérica do laboratório (F2–F4) | sim | — | — |
 | RF-009 Telemetria de cada execução (F5) | sim | — | — |
 | RF-010 Site de documentação e páginas de estudo (F6) | sim | — | — |
-| RNF-001 Ambiente reproduzível em poucos comandos | evidência | — | — |
-| RNF-002 Comparação justa entre versões | evidência | — | — |
-| RNF-003 Medições isoladas (uma execução por vez) | evidência | — | — |
-| RNF-004 Fronteiras de arquitetura verificadas | evidência | `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureRulesTest.java` `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureTest.java` | T-002 |
+| RNF-001 Ambiente reproduzível em poucos comandos | sim | — | — |
+| RNF-002 Comparação justa entre versões | sim | — | — |
+| RNF-003 Medições isoladas (uma execução por vez) | sim | — | — |
+| RNF-004 Fronteiras de arquitetura verificadas | sim | `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureRulesTest.java` `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureTest.java` | T-002 |
 | RNF-005 Determinismo dos testes | evidência | — | T-002 |
-| RNF-006 Páginas de estudo no padrão de explicação | evidência | — | — |
+| RNF-006 Páginas de estudo no padrão de explicação | sim | — | — |
 | RNF-007 Cabe na máquina de referência | evidência | — | — |
 | RNF-008 Carga de 1 milhão de produtos | evidência | — | — |
-| RNF-009 Segurança mínima de um laboratório local | evidência | — | T-002 |
+| RNF-009 Segurança mínima de um laboratório local | sim | — | T-002 |
 | RNF-010 Registro de horas para avaliar a H-01 | evidência | — | T-001 |
 | RNF-011 Publicação dos resultados (F7) | evidência | — | — |
-| RNF-012 Gate automático em cada tarefa | evidência | — | T-003 |
+| RNF-012 Gate automático em cada tarefa | sim | `scripts/test/test-sdd-conf.sh` | T-003 |
