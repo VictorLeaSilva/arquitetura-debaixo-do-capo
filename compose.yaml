@@ -1,0 +1,47 @@
+# Infraestrutura local do laboratório (T-004). Suba com: docker compose --profile mvp up -d --wait
+# Todas as imagens têm versão fixa e todas as portas ficam só em 127.0.0.1 (scripts/compose-lint.sh confere).
+name: arquitetura-debaixo-do-capo
+
+services:
+  postgres:
+    image: postgres:18.6-trixie
+    profiles: [mvp]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?defina POSTGRES_DB no .env (copie de .env.example)}
+      POSTGRES_USER: ${POSTGRES_USER:?defina POSTGRES_USER no .env (copie de .env.example)}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env (copie de .env.example)}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # A partir do PostgreSQL 18, a imagem oficial guarda os dados em /var/lib/postgresql/18/docker
+      # e o volume é montado em /var/lib/postgresql (até a 17, era /var/lib/postgresql/data).
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  observability:
+    # Coletor OpenTelemetry + Tempo + Loki + Prometheus + Grafana num container só, para desenvolvimento (D-10).
+    image: grafana/otel-lgtm:0.40.0
+    profiles: [mvp]
+    ports:
+      - "127.0.0.1:3000:3000"   # Grafana
+      - "127.0.0.1:4318:4318"   # OTLP por HTTP, para o backend rodando na máquina (Q-019)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health > /dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+volumes:
+  postgres-data:

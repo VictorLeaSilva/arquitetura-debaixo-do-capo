@@ -6,6 +6,71 @@ Um laboratório aberto, em português, que roda na sua máquina e mostra conceit
 
 **Status:** em construção — Fase 0 (fundação).
 
+## Como subir a infraestrutura local
+
+Pré-requisito: **Docker** com o Compose v2 (no Windows, o Docker Desktop; no Linux, o Docker Engine com o plugin `docker compose`).
+
+O arquivo [`compose.yaml`](compose.yaml) descreve dois serviços, os dois no perfil `mvp`:
+
+| Serviço | O que é | Porta na sua máquina |
+|---|---|---|
+| `postgres` | O banco de dados do laboratório (PostgreSQL 18.6) | `5432` |
+| `observability` | A pilha de observabilidade: recebe traces, métricas e logs por OpenTelemetry e mostra tudo no Grafana | `3000` (Grafana) e `4318` (entrada da telemetria) |
+
+Todas as portas ficam presas a `127.0.0.1`: só a sua própria máquina consegue acessá-las, nunca a rede.
+
+**1. Criar o arquivo `.env`** a partir do modelo. Ele guarda o usuário e a senha do banco e **nunca** vai para o git; os valores do modelo são só para uso local.
+
+```bash
+cp .env.example .env
+```
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**2. Subir os serviços.** O `--profile mvp` escolhe os serviços do MVP, o `-d` deixa os containers rodando em segundo plano, e o `--wait` só devolve o terminal quando os dois estiverem **prontos** (os *health checks* passaram), não apenas iniciados. Na primeira vez, o Docker baixa as imagens, o que leva alguns minutos.
+
+```bash
+docker compose --profile mvp up -d --wait
+```
+
+```powershell
+docker compose --profile mvp up -d --wait
+```
+
+**3. Conferir.** Os dois serviços devem aparecer como `healthy`:
+
+```bash
+docker compose ps
+```
+
+```powershell
+docker compose ps
+```
+
+O Grafana abre em `http://localhost:3000`, com usuário e senha `admin` / `admin` (o padrão desta imagem, que é feita só para desenvolvimento).
+
+**Para parar** os serviços, mantendo os dados do banco:
+
+```bash
+docker compose --profile mvp down
+```
+
+```powershell
+docker compose --profile mvp down
+```
+
+**Para parar e apagar também os dados** do banco: o `-v` remove o volume `postgres-data`, onde o PostgreSQL guarda as tabelas. Na próxima subida, o banco começa vazio.
+
+```bash
+docker compose --profile mvp down -v
+```
+
+```powershell
+docker compose --profile mvp down -v
+```
+
 ## Como compilar e testar o backend
 
 Pré-requisito: **JDK 25** instalado (qualquer distribuição). Não é preciso instalar o Maven: o *Maven Wrapper* (`mvnw`) baixa a versão certa na primeira execução.
