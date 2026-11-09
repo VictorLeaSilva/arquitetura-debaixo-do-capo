@@ -25,3 +25,4 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RNF-009 Segurança mínima de um laboratório local | evidência | — | T-002 |
 | RNF-010 Registro de horas para avaliar a H-01 | evidência | — | T-001 |
 | RNF-011 Publicação dos resultados (F7) | evidência | — | — |
+| RNF-012 Gate automático em cada tarefa | evidência | — | T-003 |

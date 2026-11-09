@@ -93,4 +93,7 @@ Aprendidas nas tarefas; valem para qualquer agente. Acrescente uma linha por arm
 - **Bit de execução no Windows:** o git do Windows não lê a permissão de execução do disco (`core.fileMode=false`). Scripts como `backend/mvnw` precisam de `git add --chmod=+x`; sem isso, `./mvnw` falha com "Permission denied" no Linux e no CI. (T-001, 2026-11-07)
 - **`eol=crlf` no `.gitattributes`:** o índice do git guarda LF; o CRLF aparece só na pasta de trabalho, depois do checkout (`i/lf w/crlf`). (T-001, Q-014)
 - **Mockito no JDK 21+:** sem configuração, o Mockito se carrega como agente dinâmico e o JDK imprime `WARNING: A Java agent has been loaded dynamically`. A correção é passar o Mockito como `-javaagent` no surefire (T-002, Q-013).
-- **Gate sem `scripts/sdd.conf`:** o item 1 (build) do `verify-task.sh` vira `true` e não compila nada; até a T-003 criar o `sdd.conf`, o build é reproduzido à mão e registrado na evidência. (T-001)
+- **Dependency graph desligado:** o `actions/dependency-review-action` exige o *Dependency graph* ligado (Settings → Advanced Security); um repositório recriado pode vir com ele desligado. (T-002, 2026-11-07)
+- **Avisos do JDK 25 que não são erro:** o Spotless imprime `sun.misc.Unsafe::staticFieldBase has been called` (API antiga usada pela própria ferramenta) e a JVM imprime `Sharing is only supported for boot loader classes` quando há agentes Java (Mockito, JaCoCo). (T-002)
+- **`jacoco:check` com `-q`:** o motivo da falha (`Rule violated ...`) sai como `[WARNING]` e some com `-q`; para ver o motivo, rode sem `-q`. (T-002)
+- **Merge antes da revisão:** mesclar o PR antes do PASS da revisão independente deixa a `main` com a versão reprovada; o checklist de pronto é marcado no próprio PR e só então vem o merge. (T-002, PR #4)
