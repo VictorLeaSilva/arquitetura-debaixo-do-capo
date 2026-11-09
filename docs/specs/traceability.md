@@ -20,7 +20,7 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RNF-004 Fronteiras de arquitetura verificadas | sim | `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureRulesTest.java` `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureTest.java` | T-002 |
 | RNF-005 Determinismo dos testes | evidência | — | T-002 |
 | RNF-006 Páginas de estudo no padrão de explicação | sim | — | — |
-| RNF-007 Cabe na máquina de referência | evidência | — | — |
+| RNF-007 Cabe na máquina de referência | evidência | — | T-007 |
 | RNF-008 Carga de 1 milhão de produtos | evidência | — | — |
 | RNF-009 Segurança mínima de um laboratório local | sim | `scripts/test/test-compose-lint.sh` | T-002 T-004 |
 | RNF-010 Registro de horas para avaliar a H-01 | evidência | — | T-001 |
