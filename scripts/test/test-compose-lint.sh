@@ -53,6 +53,19 @@ caso "porta sem endereço e porta em 0.0.0.0" 1 "porta publicada fora de 127.0.0
       - "0.0.0.0:9090:9090"'
 
 # covers: RNF-009
+caso "comentário no fim da linha ports: não desliga a verificação" 1 "porta publicada fora de 127.0.0.1" 1 'services:
+  app:
+    image: app:1.0
+    ports: # web
+      - "8080:8080"'
+
+# covers: RNF-009
+caso "porta na forma de fluxo (numa linha só) é recusada" 1 "use a lista em várias linhas" 1 'services:
+  app:
+    image: app:1.0
+    ports: ["8080:8080"]'
+
+# covers: RNF-009
 caso "porta na forma longa é recusada" 1 "use a forma curta" 1 'services:
   app:
     image: app:1.0
