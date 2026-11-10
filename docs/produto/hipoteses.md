@@ -14,4 +14,4 @@ Cada hipótese tem um teste barato e um critério de sucesso definido **antes** 
 **O que a H-05 ensina para a fatia 6** (medido na T-007, `infra/spike-h05/`):
 - Cada nó do Cassandra usa de 1.062 a 1.307 MiB com um *heap* de 512 MB: o *heap* é só uma parte da memória de uma JVM. Com 1 GB de *heap*, o cenário fica em 90% do limite, sem folga para a aplicação crescer; **proposta:** usar 512 MB por nó na fatia 6.
 - Os dois clusters juntos cabem (83% do limite), então um experimento de PACELC pode usar o Cassandra e o MongoDB ao mesmo tempo, com o *heap* de 512 MB.
-- A maior variação entre as rodadas veio do container de observabilidade (pico de 527 a 1.184 MiB), e não dos bancos (cada nó do MongoDB ficou entre 107 e 295 MiB).
+- A maior variação entre as rodadas veio do container de observabilidade (pico de 527 a 1.184 MiB), e não dos bancos (no cenário `mongo`, cada nó do MongoDB ficou entre 107 e 295 MiB; com os dois bancos juntos, um nó chegou a 453,5 MiB).

@@ -40,4 +40,10 @@ Cada rodada leva alguns minutos e deixa a máquina mais lenta enquanto roda.
 
 ## Onde ficam os resultados
 
-Em `resultados/<cenario>-<heap>-<data>.md`: data, ambiente, parâmetros, a confirmação de que o cluster ficou pronto e os dados foram gravados, o pico e a média ociosa no total e o pico por container. A decisão da H-05, com os números das rodadas, fica em `docs/produto/hipoteses.md`.
+Em `resultados/<cenario>-<heap>-<data>.md`: data, ambiente, parâmetros, a confirmação de que o cluster ficou pronto e os dados foram gravados, o pico e a média ociosa no total, o pico e a média ociosa **por container** e a **série** da soma da memória a cada amostra (com a fase: carga ou ociosa).
+
+Ao lado de cada resultado fica `<mesmo nome>.amostras.tsv`, com as amostras brutas (segundo, container, MiB). Com elas, qualquer número do resultado pode ser recalculado. Por exemplo, o pico da soma no bash:
+
+```bash
+awk -F'\t' 'NR > 1 { s[$1] += $3 } END { m = 0; for (k in s) if (s[k] > m) m = s[k]; printf "%.1f\n", m }' infra/spike-h05/resultados/<arquivo>.amostras.tsv
+``` A decisão da H-05, com os números das rodadas, fica em `docs/produto/hipoteses.md`.
