@@ -60,6 +60,10 @@ jobs:
         run: bash scripts/test/test-compose-lint.sh
       - name: compose.yaml com imagens fixas e portas só em 127.0.0.1
         run: bash scripts/compose-lint.sh
+      - name: Testes do verificador de ADRs
+        run: bash scripts/test/test-adr-lint.sh
+      - name: Um ADR por decisão, índice e tabela RNF → mecanismo em dia
+        run: bash scripts/adr-lint.sh
       - name: Composes do spike H-05 com imagens fixas e sem portas expostas
         run: |
           bash scripts/compose-lint.sh infra/spike-h05/compose.cassandra.yaml
