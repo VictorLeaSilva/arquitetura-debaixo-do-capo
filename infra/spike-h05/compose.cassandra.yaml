@@ -1,0 +1,36 @@
+# Spike H-05 (T-007): cluster de 3 nós de Cassandra. Rode pelo medir.sh (ele define o heap e a carga).
+# Sem portas publicadas e sem volumes: os comandos rodam com "docker compose exec" e os dados são descartáveis.
+name: spike-h05-cassandra
+
+x-cassandra: &cassandra
+  image: cassandra:5.0.9-trixie
+  environment:
+    CASSANDRA_CLUSTER_NAME: capo-lab
+    CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+    CASSANDRA_DC: dc1
+    CASSANDRA_SEEDS: cassandra-1
+    # Tamanho da memória da JVM (heap) de cada nó. O Cassandra 5 usa o coletor G1 e, com ele, só o MAX_HEAP_SIZE
+    # vale: o HEAP_NEWSIZE dos tutoriais antigos (do coletor CMS) é ignorado, com aviso (cassandra-env.sh; Q-027).
+    MAX_HEAP_SIZE: ${CASSANDRA_HEAP:-512M}
+  healthcheck:
+    # Pronto quando o próprio nó (o IP do container) aparece como UN (Up, Normal) no nodetool status.
+    # O $$ escapa o $ para o Compose: quem expande a variável é o shell do container.
+    test: ["CMD-SHELL", "nodetool status | grep -q \"^UN  *$$(hostname -i | cut -d' ' -f1) \""]
+    interval: 10s
+    timeout: 10s
+    retries: 30
+    start_period: 30s
+
+services:
+  cassandra-1:
+    <<: *cassandra
+  cassandra-2:
+    <<: *cassandra
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+  cassandra-3:
+    <<: *cassandra
+    depends_on:
+      cassandra-2:
+        condition: service_healthy

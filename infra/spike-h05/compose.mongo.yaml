@@ -1,0 +1,21 @@
+# Spike H-05 (T-007): replica set de 3 nós de MongoDB. Rode pelo medir.sh (ele inicia o replica set e a carga).
+# Sem portas publicadas e sem volumes: os comandos rodam com "docker compose exec" e os dados são descartáveis.
+name: spike-h05-mongo
+
+x-mongo: &mongo
+  image: mongo:9.0.4
+  # --wiredTigerCacheSizeGB 0.25: o cache do motor de armazenamento fica em 256 MB por nó (o mínimo aceito).
+  command: ["--replSet", "rs0", "--bind_ip_all", "--wiredTigerCacheSizeGB", "0.25"]
+  healthcheck:
+    test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+    interval: 5s
+    timeout: 5s
+    retries: 30
+
+services:
+  mongo-1:
+    <<: *mongo
+  mongo-2:
+    <<: *mongo
+  mongo-3:
+    <<: *mongo

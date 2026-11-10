@@ -20,9 +20,12 @@ Fonte única das versões do projeto (P10, DP-05). Toda página de estudo cita e
 | gitleaks/gitleaks-action | v3.0.0 (`e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e`) | `.github/workflows/ci.yml` | [Releases do gitleaks-action](https://github.com/gitleaks/gitleaks-action/releases) | 2026-11-07 |
 | PostgreSQL (imagem Docker) | 18.6 (`postgres:18.6-trixie`) | `compose.yaml`: serviço `postgres` | [Política de versões do PostgreSQL](https://www.postgresql.org/support/versioning/) e [imagem oficial no Docker Hub](https://hub.docker.com/_/postgres) | 2026-11-09 |
 | Observabilidade (imagem Docker) | 0.40.0 (`grafana/otel-lgtm:0.40.0`) | `compose.yaml`: serviço `observability` | [Releases do docker-otel-lgtm](https://github.com/grafana/docker-otel-lgtm/releases) (marcada "Latest") | 2026-11-09 |
+| Apache Cassandra (imagem Docker, spike H-05) | 5.0.9 (`cassandra:5.0.9-trixie`) | `infra/spike-h05/compose.cassandra.yaml` | [Download do Apache Cassandra](https://cassandra.apache.org/_/download.html) (5.0.9 é a GA mais recente; a 6.0 está em alpha) e [imagem oficial](https://hub.docker.com/_/cassandra) | 2026-11-09 |
+| MongoDB (imagem Docker, spike H-05) | 9.0.4 (`mongo:9.0.4`) | `infra/spike-h05/compose.mongo.yaml` | [Notas de versão do MongoDB](https://www.mongodb.com/docs/manual/release-notes/) (série estável 9.0; 9.0.4 de 2026-10-13) e [documentação da imagem oficial](https://github.com/docker-library/docs/blob/master/mongo/README.md) | 2026-11-09 |
 
 ## Particularidades de versão já registradas
 - **PostgreSQL 18:** a imagem oficial passou a guardar os dados em `/var/lib/postgresql/18/docker`, e o volume é montado em `/var/lib/postgresql`. Até a 17, o ponto de montagem era `/var/lib/postgresql/data`; um `compose.yaml` feito para a 17 e usado com a 18 perde os dados a cada recriação do container ([imagem oficial no Docker Hub](https://hub.docker.com/_/postgres)).
+- **Cassandra 5:** o coletor de memória padrão é o G1 (`-XX:+UseG1GC`), e com ele só o `MAX_HEAP_SIZE` vale; o `HEAP_NEWSIZE` dos tutoriais antigos era do coletor CMS e agora é ignorado, com aviso (`cassandra-env.sh` da imagem; Q-027).
 
 ## Próximas versões a acompanhar
 - **Spring Boot 4.2.0:** em 2026-11-07 estava em *release candidate* (4.2.0-RC2, marcada "Pre-release" nas [releases do Spring Boot no GitHub](https://github.com/spring-projects/spring-boot/releases)); a atualização entra por uma tarefa própria, depois do lançamento da versão final.
