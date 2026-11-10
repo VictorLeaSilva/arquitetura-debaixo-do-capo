@@ -15,7 +15,6 @@ React com TypeScript e Vite.
 |---|---|
 | Angular | React é o mais pedido em vagas e o mais documentado (`00 §3`) |
 | Vue | Pelo mesmo motivo (`00 §3`) |
-| Outra ferramenta de build no lugar do Vite | O Vite é o padrão atual de build do ecossistema React (`00 §3`) |
 
 ## Consequências
 - Positivas: muito material de referência; o Vite dá um ciclo de desenvolvimento rápido.

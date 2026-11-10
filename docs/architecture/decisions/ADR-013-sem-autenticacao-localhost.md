@@ -14,6 +14,7 @@ Sem login no MVP. Todas as portas publicadas pelo Docker Compose ficam presas a 
 | Alternativa | Por que não |
 |---|---|
 | Login já no MVP | Sem requisito que o justifique (DP-21); a fatia 8 trata o tema com profundidade |
+
 ## Consequências
 - Positivas: nada a configurar para usar; nada exposto fora da máquina.
 - Negativas e mitigação: o laboratório não pode ser publicado como está; a fatia 8 cobre isso.

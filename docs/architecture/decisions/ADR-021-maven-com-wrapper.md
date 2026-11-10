@@ -13,7 +13,7 @@ Maven, sempre pelo wrapper (`mvnw` e `mvnw.cmd`), no modo `only-script` (sem `.j
 ## Alternativas rejeitadas
 | Alternativa | Por que não |
 |---|---|
-| Gradle (Kotlin DSL) | Mais flexível e rápido, mas a configuração é código e pede mais explicação para quem está começando |
+| Gradle (Kotlin DSL) | A configuração é código e pede mais explicação para quem está começando |
 
 ## Consequências
 - Positivas: o mais comum em empresas; um clone limpo compila sem instalar nada além do JDK.

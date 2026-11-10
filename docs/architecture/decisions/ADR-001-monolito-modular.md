@@ -14,6 +14,7 @@ Uma única aplicação Spring Boot, com os módulos `catalog` (catálogo), `inve
 | Alternativa | Por que não |
 |---|---|
 | Microsserviços já no MVP | Traria rede entre serviços, vários deploys e dados distribuídos sem nenhum requisito do MVP que precise disso (P2) |
+
 ## Consequências
 - Positivas: um processo, um deploy e uma transação local quando dois módulos colaboram (como pedido e estoque na flash sale); a extração futura parte de fronteiras que já existem.
 - Negativas e mitigação: módulos no mesmo processo podem "vazar" uns para os outros; a mitigação é o teste de arquitetura (RNF-004).

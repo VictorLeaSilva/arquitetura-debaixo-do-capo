@@ -18,7 +18,8 @@ Nem todo módulo tem a mesma complexidade. A **arquitetura hexagonal** (também 
 |---|---|
 | Hexagonal em todos os módulos | O catálogo é praticamente leitura; teria mapeamentos duplicados sem nenhuma regra a proteger |
 | Camadas em todos os módulos | A regra do estoque (nunca vender mais do que existe) ficaria acoplada ao JPA e difícil de testar sem banco |
+
 ## Consequências
 - Positivas: o custo da arquitetura aparece só onde existe regra; o projeto mostra, na prática, quando a hexagonal vale e quando não vale.
-- Negativas e mitigação: dois estilos no mesmo código pedem explicação; ela fica nas páginas de estudo e neste ADR. Entre tabelas de módulos diferentes, a única chave estrangeira é para `product(id)`: um acoplamento aceito e registrado aqui (`01 §3`).
+- Negativas e mitigação: dois estilos no mesmo código pedem explicação; ela fica nas páginas de estudo e neste ADR.
 - Como se prova: as regras `DOMAIN_IS_FRAMEWORK_FREE`, `EXPERIMENT_ONLY_FROM_LAB_OR_EXPERIMENT` e `MODULES_TALK_ONLY_THROUGH_API` (RNF-004).

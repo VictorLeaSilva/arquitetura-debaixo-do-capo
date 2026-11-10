@@ -81,6 +81,8 @@ caso "ADR sem a linha Origem" 1 "sem a linha Origem" "sed -i '/^- \*\*Origem:/d'
 # covers: RNF-014
 caso "ADR sem a seção Contexto" 1 "sem a seção Contexto" "sed -i 's/^## Contexto/## Outra/' $DEC/ADR-001-uma.md"
 # covers: RNF-014
+caso "ADR sem a seção Decisão" 1 "sem a seção Decisão" "sed -i 's/^## Decisão/## Outra/' $DEC/ADR-001-uma.md"
+# covers: RNF-014
 caso "dois ADRs com o mesmo número" 1 "número repetido: ADR-002" "cp $DEC/ADR-002-outra.md $DEC/ADR-002-copia.md; sed -i 's/D-02 em 03/sem origem/' $DEC/ADR-002-copia.md; echo '| [ADR-002](ADR-002-copia.md) | Cópia |' >> $DEC/README.md"
 # covers: RNF-014
 caso "ADR fora do índice" 1 "fora do índice: ADR-002-outra.md" "sed -i '/ADR-002/d' $DEC/README.md"
