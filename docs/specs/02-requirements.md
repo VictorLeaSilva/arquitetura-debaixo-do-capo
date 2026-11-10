@@ -184,7 +184,14 @@ Mecanismo: configurações de segurança do GitHub (proteção da `main`, varred
 - **AC-RNF-013.3** Dado quem chega ao repositório, quando abre a página inicial, então encontra o que é o projeto, por que existe, como rodar, o roteiro, as licenças, como contribuir, como relatar uma vulnerabilidade e o código de conduta; e o link compartilhado mostra a imagem de prévia própria.
 - **Prova:** evidência (configurações conferidas pela API pública do GitHub quando possível e, nas demais, pelo checklist executado pelo autor).
 
+### RNF-014 · Decisões de arquitetura rastreáveis
+Mecanismo: um ADR por decisão (`docs/architecture/decisions/`), um índice, os diagramas C4 de contexto e de containers e a tabela RNF → mecanismo; um verificador (`scripts/adr-lint.sh`) no CI confere a correspondência.
+- **AC-RNF-014.1** Dada cada decisão `D-nn` da tabela de `03 §1`, quando `scripts/adr-lint.sh` roda, então existe exatamente um ADR cuja linha "Origem" cita aquela decisão; uma decisão sem ADR, ou com dois, faz o script sair com código 1, citando a decisão.
+- **AC-RNF-014.2** Dado cada ADR, quando o verificador roda, então ele tem "Status" (`proposto`, `aceito` ou `substituído por ADR-nnn`), "Data", "Origem" e as seções "Contexto", "Decisão", "Alternativas rejeitadas" (com pelo menos uma linha na tabela) e "Consequências"; um ADR sem alguma delas reprova, citando o arquivo e o que falta.
+- **AC-RNF-014.3** Dado o índice `docs/architecture/decisions/README.md`, quando o verificador roda, então ele lista todos os ADRs e só eles, cada um com o título; e a tabela `docs/architecture/rnf-mecanismos.md` tem uma linha para cada RNF de `02`.
+- **Prova:** testes de script (`# covers: RNF-014`) + CI.
+
 ## 3. Rastreabilidade
-- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4), RNF-012 (AC-RNF-012.1 a 012.3 e 012.5).
+- **Obrigatórios com teste rastreado:** RF-001 a RF-010 (exceto AC-009.4 e AC-010.5, provados por evidência) e RNF-001 (só AC-RNF-001.2), RNF-002, RNF-003, RNF-004, RNF-006 (só AC-RNF-006.1), RNF-009 (AC-RNF-009.1, 009.2 e 009.4), RNF-012 (AC-RNF-012.1 a 012.3 e 012.5), RNF-014.
 - **Provados por evidência ou revisão (sem tag):** AC-009.4, AC-010.5, AC-RNF-001.1, RNF-005, AC-RNF-006.2, RNF-007, RNF-008, AC-RNF-009.3 (CI), AC-RNF-009.5, RNF-010, RNF-011, RNF-013.
 - A matriz `docs/specs/traceability.md` é gerada pelo script e versionada.

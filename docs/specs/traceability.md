@@ -27,3 +27,4 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RNF-011 Publicação dos resultados (F7) | evidência | — | — |
 | RNF-012 Gate automático em cada tarefa | sim | `scripts/test/test-sdd-conf.sh` | T-003 |
 | RNF-013 Repositório público protegido e apresentável | evidência | — | T-008 |
+| RNF-014 Decisões de arquitetura rastreáveis | evidência | — | T-005 |
