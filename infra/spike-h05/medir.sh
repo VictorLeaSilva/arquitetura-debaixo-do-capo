@@ -22,6 +22,7 @@ AMOSTRA=5                    # segundos entre duas amostras de memória
 OCIOSO=60                    # segundos de amostragem depois da carga
 DATA="$(date -u +%Y-%m-%dT%H%M%SZ)"
 SAIDA="$AQUI/resultados/${CENARIO}-${HEAP}-${DATA}.md"
+BRUTO="$AQUI/resultados/${CENARIO}-${HEAP}-${DATA}.amostras.tsv"
 AMOSTRAS="$(mktemp)"
 CQ="docker compose -f $AQUI/compose.cassandra.yaml"
 MQ="docker compose -f $AQUI/compose.mongo.yaml"
@@ -157,12 +158,25 @@ mkdir -p "$AQUI/resultados"
   echo
   echo "**Critério da H-05 (pico até 6,6 GiB = 6758,4 MiB): $CABE.**"
   echo
-  echo "## Pico por container (MiB)"
+  echo "## Por container (MiB)"
   echo
-  echo "| Container | Pico |"
-  echo "|---|---|"
-  awk -F'\t' '$3 > m[$2] { m[$2] = $3 } END { for (c in m) printf "| %s | %.1f |\n", c, m[c] }' "$AMOSTRAS" | sort
+  echo "| Container | Pico | Média ociosa depois da carga |"
+  echo "|---|---|---|"
+  awk -F'\t' -v f="$FIM_CARGA" '
+    $3 > m[$2] { m[$2] = $3 }
+    $1 >= f { s[$2] += $3; n[$2]++ }
+    END { for (c in m) printf "| %s | %.1f | %s |\n", c, m[c], (n[c] ? sprintf("%.1f", s[c] / n[c]) : "n/a") }' "$AMOSTRAS" | sort
+  echo
+  echo "## Soma da memória por amostra (MiB)"
+  echo
+  echo "Segundos contados a partir do início da carga; a carga termina em ${FIM_CARGA}s. As amostras brutas, por container, estão em \`$(basename "$BRUTO")\`."
+  echo
+  echo "| Segundo | Fase | Soma |"
+  echo "|---|---|---|"
+  printf '%s\n' "$TOTAIS" | awk -F'\t' -v f="$FIM_CARGA" '{ printf "| %d | %s | %.1f |\n", $1, ($1 < f ? "carga" : "ociosa"), $2 }'
 } > "$SAIDA"
+# As amostras brutas (segundo, container, MiB) ficam versionadas ao lado do resultado: os números podem ser recalculados.
+{ printf 'segundo\tcontainer\tmib\n'; sort -n -k1,1 -k2,2 "$AMOSTRAS"; } > "$BRUTO"
 rm -f "$AMOSTRAS"
 derrubar
 log "resultado: $SAIDA (pico $PICO MiB: $CABE)"

@@ -26,13 +26,13 @@ bash infra/spike-h05/medir.sh simultaneo 512M
 ```
 
 ```powershell
-bash infra/spike-h05/medir.sh cassandra 512M
-bash infra/spike-h05/medir.sh cassandra 1G
-bash infra/spike-h05/medir.sh mongo
-bash infra/spike-h05/medir.sh simultaneo 512M
+& "C:\Program Files\Git\bin\bash.exe" infra/spike-h05/medir.sh cassandra 512M
+& "C:\Program Files\Git\bin\bash.exe" infra/spike-h05/medir.sh cassandra 1G
+& "C:\Program Files\Git\bin\bash.exe" infra/spike-h05/medir.sh mongo
+& "C:\Program Files\Git\bin\bash.exe" infra/spike-h05/medir.sh simultaneo 512M
 ```
 
-No Windows, o comando é o mesmo no PowerShell: ele chama o `bash` do Git Bash, que precisa estar instalado.
+No PowerShell, o roteiro roda pelo **Git Bash**, chamado pelo caminho completo (o `&` é o operador do PowerShell para executar um programa cujo caminho está entre aspas). **Não** use só `bash`: num Windows com o WSL instalado, `bash` no PowerShell é o `C:\Windows\System32\bash.exe`, o bash do Linux do WSL, que enxerga o disco como `/mnt/c/...` e não tem o Docker do Windows da mesma forma. Para conferir qual `bash` o seu PowerShell encontra, rode `(Get-Command bash).Source`.
 
 O segundo argumento é o *heap* de cada nó do Cassandra. Com o coletor G1, que o Cassandra 5 usa por padrão, só o `MAX_HEAP_SIZE` vale: o `HEAP_NEWSIZE` que aparece em tutoriais antigos era do coletor CMS e agora é ignorado.
 
