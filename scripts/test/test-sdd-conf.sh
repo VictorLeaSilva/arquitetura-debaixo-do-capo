@@ -160,6 +160,35 @@ dono/repo@abc123" "$(coordenadas "$d")"
   rm -rf "$d"
 }
 
+# --- Cenário 3b: package.json (dependencies e devDependencies; o que está em node_modules não conta) ---
+# covers: RNF-012
+cenario_npm() {
+  local d; d="$(novo_repo)"
+  mkdir -p "$d/site/node_modules/intrusa"
+  cat > "$d/site/package.json" <<'EOF'
+{
+  "name": "site",
+  "private": true,
+  "scripts": { "build": "docusaurus build" },
+  "dependencies": {
+    "react": "19.3.1",
+    "@docusaurus/core": "3.10.2"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  },
+  "engines": { "node": ">=26" }
+}
+EOF
+  printf '{ "name": "intrusa", "dependencies": { "nao-conta": "1.0.0" } }\n' > "$d/site/node_modules/intrusa/package.json"
+  (cd "$d" && git add -A && git commit -qm x) > /dev/null 2>&1
+  confere "package.json: nome@versão de dependencies e devDependencies, fora de node_modules" \
+"@docusaurus/core@3.10.2
+react@19.3.1
+typescript@6.0.3" "$(coordenadas "$d")"
+  rm -rf "$d"
+}
+
 # Repositório com uma tarefa T-010 (covers RF-001) e um pom base, já no branch da tarefa.
 repo_com_tarefa() {
   local d; d="$(novo_repo)"
@@ -231,6 +260,11 @@ gate "gate: dependência permitida passa (verde parcial com --rapido)" 3 "VERDE 
 gate "gate: plugin novo fora do contrato reprova o item 3" 1 "g.p:sneaky:2.0" \
   "printf '<project>\n    <dependencies>\n        $DEP_OK\n    </dependencies>\n    $PLUGIN\n</project>\n' > pom.xml"
 
+# --- Cenário 4b: dependência npm fora do contrato reprova o item 3, citando nome@versão ---
+# covers: RNF-012
+gate "gate: dependência npm fora do contrato reprova o item 3" 1 "left-pad@1.3.0" \
+  "printf '{\n  \"name\": \"x\",\n  \"dependencies\": { \"left-pad\": \"1.3.0\" }\n}\n' > src/package.json"
+
 # --- Cenário 5: arquivo fora do escopo (item 2) e teste sem a marcação (item 4) ---
 # covers: RNF-012
 gate "gate: arquivo fora de allowed_paths reprova o item 2" 1 "FALHA item 2" "echo x > fora.txt"
@@ -256,6 +290,7 @@ cenario_covers_em_script() {
 cenario_pom
 cenario_plugin_aninhado
 cenario_actions
+cenario_npm
 cenario_covers_em_script
 
 echo "---"; echo "$PASSOU passaram, $FALHOU falharam"

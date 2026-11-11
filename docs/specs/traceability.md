@@ -13,13 +13,13 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RF-007 Experimento "últimas unidades" da flash sale (F4) | sim | — | — |
 | RF-008 Tela genérica do laboratório (F2–F4) | sim | — | — |
 | RF-009 Telemetria de cada execução (F5) | sim | — | — |
-| RF-010 Site de documentação e páginas de estudo (F6) | sim | — | T-006 |
+| RF-010 Site de documentação e páginas de estudo (F6) | sim | `scripts/test/test-doc-lint.sh` `scripts/test/test-site-build.sh` | T-006 |
 | RNF-001 Ambiente reproduzível em poucos comandos | sim | `scripts/test/test-compose-lint.sh` | T-004 |
 | RNF-002 Comparação justa entre versões | sim | — | — |
 | RNF-003 Medições isoladas (uma execução por vez) | sim | — | — |
 | RNF-004 Fronteiras de arquitetura verificadas | sim | `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureRulesTest.java` `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureTest.java` | T-002 |
 | RNF-005 Determinismo dos testes | evidência | — | T-002 |
-| RNF-006 Páginas de estudo no padrão de explicação | sim | — | T-006 |
+| RNF-006 Páginas de estudo no padrão de explicação | sim | `scripts/test/test-doc-lint.sh` | T-006 |
 | RNF-007 Cabe na máquina de referência | evidência | — | T-007 |
 | RNF-008 Carga de 1 milhão de produtos | evidência | — | — |
 | RNF-009 Segurança mínima de um laboratório local | sim | `scripts/test/test-compose-lint.sh` | T-002 T-004 |

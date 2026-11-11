@@ -1,0 +1,59 @@
+---
+slug: /
+title: Comece aqui
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Comece aqui
+
+Este site reúne as **páginas de estudo** do laboratório Arquitetura Debaixo do Capô: um e-commerce com flash sale (uma promoção relâmpago, com pouco estoque e muita gente comprando ao mesmo tempo) em que cada conceito de arquitetura aparece em versões ruim, média e boa, medidas lado a lado. Nada aqui pressupõe mais do que lógica de programação e Java básico; cada termo novo é explicado na primeira vez que aparece e fica também no [glossário](./glossario.md).
+
+## Como ler uma página de estudo
+
+Toda página de estudo tem as mesmas 13 seções, sempre nesta ordem, para que você saiba onde procurar cada coisa:
+
+1. **Testado com:** as versões exatas em que tudo foi executado.
+2. **Termos usados nesta página:** as definições de que você precisa antes de começar.
+3. **O que é:** o conceito, em poucas frases.
+4. **O que cada comando e configuração faz:** linha a linha, sem passos mágicos.
+5. **Por que importa:** o problema real que o conceito resolve.
+6. **Alternativas:** as outras formas de resolver o mesmo problema.
+7. **Por que escolhemos e por que testamos assim:** o motivo da escolha e da forma de medir.
+8. **Como verificar:** os comandos para você mesmo conferir o resultado.
+9. **Armadilhas:** os erros comuns e como reconhecê-los.
+10. **Windows × Linux:** o que muda entre os dois sistemas (ou por que nada muda).
+11. **Depende da versão:** o que muda entre versões, com link para as notas oficiais.
+12. **Resultados medidos:** os números das execuções, com a data e o ambiente.
+13. **Perguntas de verificação:** perguntas para conferir se a ideia ficou clara.
+
+A [página-modelo](./como-estudar/modelo-de-pagina.mdx) mostra esse formato completo, explicando como subir este site na sua máquina.
+
+## Os comandos aparecem em duas versões
+
+Todo comando de terminal aparece em duas abas: **bash** (o terminal do Linux, do macOS e do Git Bash no Windows) e **PowerShell** (o terminal padrão do Windows). Escolha a sua uma vez: as outras páginas abrem já na mesma aba. Por exemplo, para subir este site:
+
+<Tabs groupId="shell">
+<TabItem value="bash" label="bash">
+
+```bash
+cd site
+npm ci
+npm start
+```
+
+</TabItem>
+<TabItem value="powershell" label="PowerShell">
+
+```powershell
+cd site
+npm ci
+npm start
+```
+
+</TabItem>
+</Tabs>
+
+Depois, abra `http://127.0.0.1:3001/arquitetura-debaixo-do-capo/` no navegador. Cada bloco tem um botão de copiar no canto superior direito.

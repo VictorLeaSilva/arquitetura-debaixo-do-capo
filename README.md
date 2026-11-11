@@ -114,6 +114,42 @@ cd backend
 
 O mesmo `verify` roda no GitHub a cada pull request, junto com um detector de segredos e a revisão das dependências novas (`.github/workflows/ci.yml`).
 
+## Site de documentação
+
+As páginas de estudo ficam num site feito com Docusaurus, na pasta `site/`. Pré-requisito: **Node.js 26** (a versão fixada em `site/.nvmrc`; confira com `node -v`). O npm vem junto com o Node.js.
+
+No bash (Linux, macOS ou Git Bash no Windows):
+
+```bash
+cd site
+npm ci
+npm start
+```
+
+No PowerShell (Windows):
+
+```powershell
+cd site
+npm ci
+npm start
+```
+
+O `npm ci` instala exatamente as versões do `package-lock.json` (na primeira vez, leva alguns minutos). O `npm start` sobe o site em `http://127.0.0.1:3001/arquitetura-debaixo-do-capo/`, só para a sua máquina, e atualiza a página no navegador a cada arquivo alterado; para parar, `Ctrl+C`. A porta é a 3001 porque a 3000 é do Grafana.
+
+Para conferir tudo o que o CI confere no site (tipos, lint, formatação e o build, que reprova link interno quebrado):
+
+```bash
+cd site
+npm run verify
+```
+
+```powershell
+cd site
+npm run verify
+```
+
+Durante o build pode aparecer `ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.`: é um aviso do Node 26 sobre um recurso que o build não usa, não um erro. As páginas de estudo também são conferidas pelo `scripts/doc-lint.sh` (as 13 seções do padrão de explicação e os comandos em abas bash e PowerShell); a página-modelo é `site/docs/como-estudar/modelo-de-pagina.mdx`.
+
 ## Licenças
 
 - **Código** (`backend/`, `frontend/`, `scripts/` e arquivos de configuração): MIT, em [`LICENSE`](LICENSE).
