@@ -9,9 +9,12 @@ hs_err_pid*
 
 # Node / front / docs
 node_modules/
+site/node_modules/
 dist/
 build/
+site/build/
 .docusaurus/
+site/.docusaurus/
 coverage/
 
 # IDEs e sistema operacional

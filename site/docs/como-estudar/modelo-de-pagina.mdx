@@ -1,0 +1,119 @@
+---
+title: Como subir este site na sua máquina
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Como subir este site na sua máquina
+
+:::info Esta página é também o modelo
+Toda página de estudo do laboratório segue exatamente este formato: as 13 seções abaixo, nesta ordem, com os comandos em abas bash e PowerShell. O verificador `scripts/doc-lint.sh` confere isso em cada mudança.
+:::
+
+## Testado com
+- Node.js 26.13.0 com npm 11.20.0 (a versão fixada é a 26, no arquivo `site/.nvmrc`).
+- Docusaurus 3.10.2 e React 19.3.1.
+- Windows 11 com Git Bash (bash 5.3) e Windows PowerShell 5.1; no CI do GitHub, Ubuntu (`ubuntu-latest`).
+- Conferido em 2026-11-10. A lista completa de versões do projeto fica em `docs/versoes.md` no repositório.
+
+## Termos usados nesta página
+- **Node.js:** um programa que executa JavaScript fora do navegador; é ele que gera o site.
+- **npm:** o gerenciador de pacotes que vem com o Node.js. Ele baixa as bibliotecas e roda os comandos definidos no `package.json`.
+- **`package.json`:** o arquivo que lista as bibliotecas do site, cada uma numa versão exata, e os comandos disponíveis (`start`, `build`, `verify`).
+- **`package-lock.json`:** a "fotografia" de todas as bibliotecas instaladas, inclusive as que as bibliotecas usam por dentro, com a versão exata de cada uma.
+- **Docusaurus:** a ferramenta que transforma os arquivos Markdown de `site/docs/` num site navegável.
+- **Servidor de desenvolvimento:** um programa que serve o site na sua máquina e atualiza a página no navegador sempre que um arquivo muda.
+
+Os outros termos estão no [glossário](../glossario.md).
+
+## O que é
+O site de documentação é gerado a partir de arquivos de texto (Markdown) guardados no próprio repositório, na pasta `site/docs/`. Para lê-lo na sua máquina, você instala as bibliotecas uma vez e sobe o servidor de desenvolvimento; o navegador mostra o mesmo site que um dia vai estar publicado na internet.
+
+## O que cada comando e configuração faz
+<Tabs groupId="shell">
+<TabItem value="bash" label="bash">
+
+```bash
+cd site
+npm ci
+npm start
+```
+
+</TabItem>
+<TabItem value="powershell" label="PowerShell">
+
+```powershell
+cd site
+npm ci
+npm start
+```
+
+</TabItem>
+</Tabs>
+
+- **`cd site`:** entra na pasta do site, onde está o `package.json`. Todo comando `npm` lê o `package.json` da pasta atual.
+- **`npm ci`:** instala exatamente as versões do `package-lock.json` na pasta `node_modules`. Se o `package-lock.json` não bater com o `package.json`, o comando para com erro, em vez de "consertar" sozinho. Apaga o `node_modules` antes, para começar do zero.
+- **`npm start`:** roda o script `start` do `package.json`, que é `docusaurus start --host 127.0.0.1 --port 3001`. O `--host 127.0.0.1` faz o site responder só para a sua máquina; o `--port 3001` evita a porta 3000, que é do Grafana no laboratório.
+- **`npm run build`:** gera a versão final do site em `site/build/`. É o comando que reprova um link interno quebrado.
+- **`npm run verify`:** roda, em sequência, a checagem de tipos (`tsc`), o lint (`eslint`), a formatação (`prettier`) e o build. É o mesmo comando que o CI roda em cada PR.
+
+## Por que importa
+Uma página de estudo só ajuda se você consegue reproduzir o que ela mostra. Subir o site localmente é o primeiro exercício de reprodutibilidade: as mesmas versões, os mesmos comandos e o mesmo resultado na sua máquina, na do autor e no CI.
+
+## Alternativas
+- **`npm install` no lugar de `npm ci`:** também instala as bibliotecas, mas pode atualizar o `package-lock.json` para versões mais novas dentro das faixas permitidas. É útil para quem mantém o projeto e quer atualizar uma biblioteca; para quem só quer reproduzir, o `npm ci` garante as mesmas versões.
+- **Ler os arquivos Markdown direto no GitHub:** funciona para o texto, mas as abas, os diagramas e os links entre páginas só aparecem no site gerado.
+- **Rodar o site num container:** dispensaria instalar o Node.js, mas acrescentaria um Dockerfile e mais memória. O projeto preferiu o Node.js instalado (decisão Q-030 no repositório).
+
+## Por que escolhemos e por que testamos assim
+O projeto usa o Docusaurus porque ele já traz as abas sincronizadas entre páginas e o botão de copiar nos blocos de código (decisão Q-003, ADR-022). O teste do site faz o build duas vezes de propósito com um link quebrado (um para um arquivo inexistente e outro para um caminho inexistente) e confere que o build falha: assim, um link quebrado nunca chega publicado.
+
+## Como verificar
+<Tabs groupId="shell">
+<TabItem value="bash" label="bash">
+
+```bash
+cd site
+npm run build
+```
+
+</TabItem>
+<TabItem value="powershell" label="PowerShell">
+
+```powershell
+cd site
+npm run build
+```
+
+</TabItem>
+</Tabs>
+
+O build termina com `[SUCCESS] Generated static files in "build".` Com o `npm start` rodando, o endereço `http://127.0.0.1:3001/arquitetura-debaixo-do-capo/` mostra a página "Comece aqui".
+
+## Armadilhas
+- **Versão errada do Node.js:** o `package.json` exige o Node.js 26 ou mais novo (campo `engines`). Com uma versão antiga, o `npm ci` avisa `EBADENGINE`. Confira com `node -v`.
+- **Porta ocupada:** se outro programa já usa a 3001, o `npm start` pergunta se pode usar outra porta. O endereço muda junto; leia o que o comando imprime.
+- **Endereço sem o final:** o site fica em `/arquitetura-debaixo-do-capo/`, não na raiz. Abrir só `http://127.0.0.1:3001/` mostra uma página de "não encontrado".
+- **Esquecer o `cd site`:** fora da pasta `site`, o npm não encontra o `package.json` e para com o erro `ENOENT`.
+
+## Windows × Linux
+Os comandos são os mesmos nos dois sistemas, porque quem os interpreta é o npm, não o *shell*. A diferença aparece em comandos encadeados: no bash, `cd site && npm ci` só roda o segundo se o primeiro der certo; o Windows PowerShell 5.1 não tem o `&&`, por isso esta página usa um comando por linha.
+
+## Depende da versão
+- O Docusaurus 3.10 exige o Node.js 20 ou mais novo ([requisitos de instalação do Docusaurus](https://docusaurus.io/docs/installation#requirements)); o projeto fixa o 26, a versão LTS atual ([calendário de versões do Node.js](https://nodejs.org/en/about/previous-releases)).
+- Na linha 3 do Docusaurus, a opção que reprova link Markdown quebrado mudou de lugar: saiu da raiz da configuração e foi para `markdown.hooks.onBrokenMarkdownLinks` ([notas de versão do Docusaurus](https://github.com/facebook/docusaurus/releases)).
+
+## Resultados medidos
+Não se aplica: esta página não mede desempenho. As páginas dos experimentos trazem aqui os números de cada execução, com a data e o ambiente.
+
+## Perguntas de verificação
+1. Qual a diferença entre `npm ci` e `npm install`, e por que esta página usa o primeiro?
+   <details><summary>Resposta</summary>O `npm ci` instala exatamente as versões do `package-lock.json` e falha se ele não bater com o `package.json`; o `npm install` pode atualizar o lock. Para reproduzir, as versões precisam ser as mesmas.</details>
+2. Por que o site usa a porta 3001, e não a 3000?
+   <details><summary>Resposta</summary>Porque a 3000 é do Grafana no laboratório; as duas coisas podem rodar ao mesmo tempo.</details>
+3. O que o `--host 127.0.0.1` impede?
+   <details><summary>Resposta</summary>Que outra máquina da rede acesse o site: ele responde só para o seu próprio computador.</details>
+4. Como você prova que um link interno quebrado não chega publicado?
+   <details><summary>Resposta</summary>O build está configurado para falhar com link quebrado, e um teste cria um link quebrado de propósito e confere que o build falha.</details>

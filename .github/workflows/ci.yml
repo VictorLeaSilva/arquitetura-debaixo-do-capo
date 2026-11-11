@@ -1,4 +1,4 @@
-# CI do projeto (T-002 a T-004): gates do backend, harness SDD, verificador do compose, detector de segredos e revisão de dependências.
+# CI do projeto (T-002 a T-006): gates do backend, build do site, harness SDD, verificador do compose, detector de segredos e revisão de dependências.
 # Toda action é fixada pelo SHA do commit da tag (a tag fica no comentário): uma tag pode ser movida, o SHA não.
 name: ci
 
@@ -64,12 +64,37 @@ jobs:
         run: bash scripts/test/test-adr-lint.sh
       - name: Um ADR por decisão, índice e tabela RNF → mecanismo em dia
         run: bash scripts/adr-lint.sh
+      - name: Testes do verificador das páginas de estudo
+        run: bash scripts/test/test-doc-lint.sh
+      - name: Páginas de estudo no padrão DP-05 (seções e abas bash/PowerShell)
+        run: bash scripts/doc-lint.sh
       - name: Composes do spike H-05 com imagens fixas e sem portas expostas
         run: |
           bash scripts/compose-lint.sh infra/spike-h05/compose.cassandra.yaml
           bash scripts/compose-lint.sh infra/spike-h05/compose.mongo.yaml
       - name: Sintaxe do compose.yaml (com os valores do .env.example)
         run: cp .env.example .env && docker compose --profile mvp config --quiet
+
+  site:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Instalar o Node da versão fixada em site/.nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Instalar as dependências exatas do package-lock.json
+        run: npm ci --no-audit --no-fund
+      - name: Tipos, lint, formatação e build do site
+        run: npm run verify
+      - name: Link interno quebrado derruba o build
+        run: bash ../scripts/test/test-site-build.sh
 
   dependency-review:
     if: github.event_name == 'pull_request'
