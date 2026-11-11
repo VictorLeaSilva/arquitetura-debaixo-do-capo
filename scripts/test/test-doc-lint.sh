@@ -115,6 +115,15 @@ caso "7. bloco powershell em abas sem groupId shell" 1 "bloco powershell fora de
 caso "8. grupo shell sem a aba powershell" 1 "ERRO p.mdx:$L: grupo de abas shell sem a aba powershell" \
   "printf '<Tabs groupId=\"shell\">\n<TabItem value=\"bash\">\n\n\`\`\`bash\nls\n\`\`\`\n\n</TabItem>\n</Tabs>\n' >> p.mdx"
 # covers: RF-010 RNF-006
+caso "8b. grupo shell sem a aba bash" 1 "ERRO p.mdx:$L: grupo de abas shell sem a aba bash" \
+  "printf '<Tabs groupId=\"shell\">\n<TabItem value=\"powershell\">\n\n\`\`\`powershell\nls\n\`\`\`\n\n</TabItem>\n</Tabs>\n' >> p.mdx"
+# covers: RF-010 RNF-006
+caso "6b. bloco sh fora das abas" 1 "ERRO p.mdx:$L: bloco sh fora de um grupo de abas groupId=\"shell\"" \
+  "printf '\`\`\`sh\nls\n\`\`\`\n' >> p.mdx"
+# covers: RF-010 RNF-006
+caso "6c. bloco cmd fora das abas" 1 "ERRO p.mdx:$L: bloco cmd fora de um grupo de abas groupId=\"shell\"" \
+  "printf '\`\`\`cmd\ndir\n\`\`\`\n' >> p.mdx"
+# covers: RF-010 RNF-006
 caso "9. bloco sem linguagem" 1 "ERRO p.mdx:$L: bloco de código sem linguagem" "printf '\`\`\`\nx\n\`\`\`\n' >> p.mdx"
 # covers: RF-010 RNF-006
 caso "10. bloco java fora das abas" 0 "doc-lint: ok (1 páginas)" "printf '\`\`\`java\nclass A {}\n\`\`\`\n' >> p.mdx"

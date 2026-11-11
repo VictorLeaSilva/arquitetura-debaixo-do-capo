@@ -15,7 +15,7 @@ Toda página de estudo do laboratório segue exatamente este formato: as 13 seç
 ## Testado com
 - Node.js 26.13.0 com npm 11.20.0 (a versão fixada é a 26, no arquivo `site/.nvmrc`).
 - Docusaurus 3.10.2 e React 19.3.1.
-- Windows 11 com Git Bash (bash 5.3) e Windows PowerShell 5.1; no CI do GitHub, Ubuntu (`ubuntu-latest`).
+- Windows 11 com Git Bash (bash 5.3) e Windows PowerShell 5.1; no CI do GitHub, Ubuntu 24.04 (a máquina `ubuntu-latest`), e o `doc-lint.sh` também num container `ubuntu:24.04`.
 - Conferido em 2026-11-10. A lista completa de versões do projeto fica em `docs/versoes.md` no repositório.
 
 ## Termos usados nesta página
@@ -24,6 +24,10 @@ Toda página de estudo do laboratório segue exatamente este formato: as 13 seç
 - **`package.json`:** o arquivo que lista as bibliotecas do site, cada uma numa versão exata, e os comandos disponíveis (`start`, `build`, `verify`).
 - **`package-lock.json`:** a "fotografia" de todas as bibliotecas instaladas, inclusive as que as bibliotecas usam por dentro, com a versão exata de cada uma.
 - **Docusaurus:** a ferramenta que transforma os arquivos Markdown de `site/docs/` num site navegável.
+- **Markdown:** um formato de texto simples, em que `#` vira título e `**negrito**` vira negrito; as páginas são escritas nele (os arquivos `.mdx` aceitam também componentes, como as abas).
+- **CI (integração contínua):** a verificação automática que o GitHub roda a cada mudança enviada; aqui, o arquivo `.github/workflows/ci.yml`.
+- **PR (*pull request*):** o pedido para juntar uma mudança ao código principal; o CI roda em cada PR.
+- **Lint:** uma checagem automática que procura erros comuns e problemas de estilo no código, sem executá-lo.
 - **Servidor de desenvolvimento:** um programa que serve o site na sua máquina e atualiza a página no navegador sempre que um arquivo muda.
 
 Os outros termos estão no [glossário](../glossario.md).
@@ -103,7 +107,7 @@ Os comandos são os mesmos nos dois sistemas, porque quem os interpreta é o npm
 
 ## Depende da versão
 - O Docusaurus 3.10 exige o Node.js 20 ou mais novo ([requisitos de instalação do Docusaurus](https://docusaurus.io/docs/installation#requirements)); o projeto fixa o 26, a versão LTS atual ([calendário de versões do Node.js](https://nodejs.org/en/about/previous-releases)).
-- Na linha 3 do Docusaurus, a opção que reprova link Markdown quebrado mudou de lugar: saiu da raiz da configuração e foi para `markdown.hooks.onBrokenMarkdownLinks` ([notas de versão do Docusaurus](https://github.com/facebook/docusaurus/releases)).
+- No Docusaurus 3.9.0, a opção que reprova link Markdown quebrado mudou de lugar: saiu da raiz da configuração (`onBrokenMarkdownLinks`, agora descontinuada) e foi para `markdown.hooks.onBrokenMarkdownLinks` ([notas da versão 3.9.0](https://github.com/facebook/docusaurus/releases/tag/v3.9.0)).
 
 ## Resultados medidos
 Não se aplica: esta página não mede desempenho. As páginas dos experimentos trazem aqui os números de cada execução, com a data e o ambiente.
