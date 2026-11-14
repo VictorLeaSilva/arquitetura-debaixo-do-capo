@@ -5,7 +5,7 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | Requisito | Obrigatório com teste | Testes | Tarefas |
 |---|---|---|---|
 | RF-001 Carregar os dados de referência (F1) | sim | `backend/src/test/java/io/github/victorleasilva/capo/SchemaMigrationTest.java` `backend/src/test/java/io/github/victorleasilva/capo/lab/seed/ReferenceDataSeederTest.java` `backend/src/test/java/io/github/victorleasilva/capo/lab/seed/SeedSettingsTest.java` | T-010 |
-| RF-002 Listar e detalhar os experimentos | sim | — | — |
+| RF-002 Listar e detalhar os experimentos | sim | — | T-011 |
 | RF-003 Executar um experimento | sim | — | — |
 | RF-004 Consultar uma execução | sim | — | — |
 | RF-005 Experimento "interseção de listas" (F2) | sim | — | — |
@@ -15,7 +15,7 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 | RF-009 Telemetria de cada execução (F5) | sim | — | — |
 | RF-010 Site de documentação e páginas de estudo (F6) | sim | `scripts/test/test-doc-lint.sh` `scripts/test/test-site-build.sh` | T-006 |
 | RNF-001 Ambiente reproduzível em poucos comandos | sim | `scripts/test/test-compose-lint.sh` | T-004 |
-| RNF-002 Comparação justa entre versões | sim | — | — |
+| RNF-002 Comparação justa entre versões | sim | — | T-011 |
 | RNF-003 Medições isoladas (uma execução por vez) | sim | — | — |
 | RNF-004 Fronteiras de arquitetura verificadas | sim | `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureRulesTest.java` `backend/src/test/java/io/github/victorleasilva/capo/architecture/ArchitectureTest.java` | T-002 |
 | RNF-005 Determinismo dos testes | evidência | — | T-002 |
