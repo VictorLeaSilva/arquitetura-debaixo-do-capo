@@ -184,7 +184,7 @@ O MVP não publica eventos de mensageria (fatia 5). O contrato versionado é o d
 | `studyPage` | texto | caminho dentro de `site/docs/` (AC-010.4) |
 | `fairness` | enum | `same-result` · `demonstrates-error` |
 | `evidenceMeasurement` | texto | obrigatório quando `fairness` = `demonstrates-error` (AC-RNF-002.2) |
-| `variants[]` | lista (≥ 2) | `{id: bad\|medium\|good, label, description, complexity?, sourceRef, maxSize?}` |
+| `variants[]` | lista (≥ 2) | `{id: bad\|medium\|good, label, description, complexity?, sourceRef?, maxSize?}`; `sourceRef` é o caminho do arquivo da versão no repositório, acrescentado pela tarefa de cada experimento quando o código existe (Q-039) |
 | `parameters[]` | lista | `{name, label, type: integer\|integer-set, default, min?, max?, allowed?, isSize?}`; no máximo um parâmetro com `isSize` = `true` (é o "tamanho" dos resultados) |
 | `measurements[]` | lista (≥ 1) | `{id, label, unit}` |
 | `chart` | objeto, opcional | `{x: <parâmetro com isSize>, y: <id de medição>, scale: linear\|log}` |
