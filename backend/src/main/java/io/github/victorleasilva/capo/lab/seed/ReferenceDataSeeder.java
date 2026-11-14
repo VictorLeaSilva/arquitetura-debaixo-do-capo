@@ -55,7 +55,6 @@ public class ReferenceDataSeeder implements ApplicationRunner {
         this.orderingSeed = orderingSeed;
         // Exposto pelo Prometheus como lab_seed_duration_seconds; vale 0 até a primeira carga (RNF-008).
         TimeGauge.builder("lab.seed.duration", lastDurationMs, TimeUnit.MILLISECONDS, AtomicLong::doubleValue)
-                .description("Duração da última carga dos dados de referência")
                 .register(meterRegistry);
     }
 

@@ -11,7 +11,12 @@ import io.github.victorleasilva.capo.support.PostgresTestDatabase;
 import io.github.victorleasilva.capo.support.SeedApplication;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.TimeGauge;
+import jakarta.annotation.PreDestroy;
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -90,7 +95,10 @@ class ReferenceDataSeederTest {
         assertThatThrownBy(() -> SeedApplication.start(url, raw)).isInstanceOf(RuntimeException.class);
 
         assertThat(output.getAll()).contains("LAB_SEED_PRODUCTS inválido: \"" + raw + "\"");
-        assertThat(count(jdbc(url), "product")).isZero();
+        JdbcClient db = jdbc(url);
+        for (String table : List.of("category", "product", "product_attribute", "flash_sale_stock")) {
+            assertThat(count(db, table)).as(table).isZero();
+        }
     }
 
     @Test
@@ -143,19 +151,34 @@ class ReferenceDataSeederTest {
     @Test
     void completedLoadLogsEventAndRecordsGauge() {
         String url = PostgresTestDatabase.createDatabase("t0102");
-        try (ConfigurableApplicationContext context = SeedApplication.start(url, SIZE, SeedEventCapture.class)) {
+        try (ConfigurableApplicationContext context =
+                SeedApplication.start(url, SIZE, SeedEventCapture.class, SteppingClockSource.class)) {
             ILoggingEvent event = context.getBean(SeedEventCapture.class)
                     .events("seed.completed")
                     .getFirst();
             assertThat(value(event, "products")).isEqualTo("10000");
-            assertThat(Long.parseLong(value(event, "duration_ms"))).isNotNegative();
+            assertThat(value(event, "duration_ms")).isEqualTo("1500");
 
             TimeGauge gauge = context.getBean(MeterRegistry.class)
                     .find("lab.seed.duration")
                     .timeGauge();
             assertThat(gauge).isNotNull();
-            assertThat(gauge.value(TimeUnit.SECONDS)).isNotNegative();
+            assertThat(gauge.value(TimeUnit.SECONDS)).isEqualTo(1.5);
         }
+    }
+
+    /** D-09: a limpeza e a carga estão na mesma transação; uma falha no meio de uma recarga não apaga nada. */
+    @Test
+    void failureMidReloadKeepsPreviousData() {
+        String url = PostgresTestDatabase.createDatabase("ac0015b");
+        SeedApplication.start(url, SIZE).close();
+        JdbcClient db = jdbc(url);
+        Map<String, Object> before = snapshot(db);
+
+        assertThatThrownBy(() -> SeedApplication.start(url, "20000", FailingSeedFailpoint.class))
+                .hasStackTraceContaining("falha de teste entre produtos e atributos");
+
+        assertThat(snapshot(db)).isEqualTo(before);
     }
 
     // --- apoio ---
@@ -238,10 +261,49 @@ class ReferenceDataSeederTest {
             ((Logger) LoggerFactory.getLogger(ReferenceDataSeeder.class)).addAppender(appender);
         }
 
+        /** Desliga o appender quando o contexto fecha, para não acumular appenders entre os testes. */
+        @PreDestroy
+        void detach() {
+            ((Logger) LoggerFactory.getLogger(ReferenceDataSeeder.class)).detachAppender(appender);
+            appender.stop();
+        }
+
         List<ILoggingEvent> events(String message) {
             return appender.list.stream()
                     .filter(event -> message.equals(event.getMessage()))
                     .toList();
+        }
+    }
+
+    /**
+     * Relógio de teste que avança 1,5 s a cada leitura: a carga lê o relógio no início e no fim, então a duração
+     * esperada é exatamente 1500 ms. Sem anotação, pelo mesmo motivo do {@link SeedEventCapture}.
+     */
+    static final class SteppingClockSource {
+
+        @Bean
+        @Primary
+        Clock steppingClock() {
+            return new Clock() {
+                private Instant next = Instant.parse("2026-01-01T00:00:00Z");
+
+                @Override
+                public ZoneId getZone() {
+                    return ZoneOffset.UTC;
+                }
+
+                @Override
+                public Clock withZone(ZoneId zone) {
+                    return this;
+                }
+
+                @Override
+                public synchronized Instant instant() {
+                    Instant now = next;
+                    next = next.plusMillis(1500);
+                    return now;
+                }
+            };
         }
     }
 
