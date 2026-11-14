@@ -287,7 +287,31 @@ cenario_covers_em_script() {
   rm -rf "$d"
 }
 
+# --- Cenário 7 (Q-018): a marcação vale só no começo da linha; dentro de um texto de exemplo, não conta ---
+# covers: RNF-012
+cenario_marcacao_em_texto() {
+  local d linha; d="$(novo_repo)"
+  (cd "$d" && printf '#!/usr/bin/env bash\nprintf %s > x.java\n' "'@Tag(\"RF-001\")\\n'" > scripts/test/test-exemplo.sh \
+     && bash scripts/check-traceability.sh --write) > /dev/null 2>&1
+  linha="$(grep -F 'RF-001' "$d/docs/specs/traceability.md")"
+  if printf '%s' "$linha" | grep -qF 'test-exemplo.sh'; then
+    fail "matriz: marcação dentro de um texto não conta" "$linha"
+  else
+    ok "matriz: marcação dentro de um texto não conta"
+  fi
+  (cd "$d" && printf 'class RegistrarTest {\n    @Tag("RF-001")\n    void registra() {}\n}\n' > src/test/RegistrarTest.java \
+     && bash scripts/check-traceability.sh --write) > /dev/null 2>&1
+  linha="$(grep -F 'RF-001' "$d/docs/specs/traceability.md")"
+  if printf '%s' "$linha" | grep -qF 'src/test/RegistrarTest.java'; then
+    ok "matriz: @Tag no começo da linha de um teste Java conta"
+  else
+    fail "matriz: @Tag no começo da linha de um teste Java conta" "$linha"
+  fi
+  rm -rf "$d"
+}
+
 cenario_pom
+cenario_marcacao_em_texto
 cenario_plugin_aninhado
 cenario_actions
 cenario_npm

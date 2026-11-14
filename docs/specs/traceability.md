@@ -4,7 +4,7 @@ Gerado por `scripts/check-traceability.sh --write`. Não edite à mão.
 
 | Requisito | Obrigatório com teste | Testes | Tarefas |
 |---|---|---|---|
-| RF-001 Carregar os dados de referência (F1) | sim | `scripts/test/run-tests.sh` `scripts/test/test-sdd-conf.sh` | T-010 |
+| RF-001 Carregar os dados de referência (F1) | sim | `backend/src/test/java/io/github/victorleasilva/capo/SchemaMigrationTest.java` `backend/src/test/java/io/github/victorleasilva/capo/lab/seed/ReferenceDataSeederTest.java` `backend/src/test/java/io/github/victorleasilva/capo/lab/seed/SeedSettingsTest.java` | T-010 |
 | RF-002 Listar e detalhar os experimentos | sim | — | — |
 | RF-003 Executar um experimento | sim | — | — |
 | RF-004 Consultar uma execução | sim | — | — |
