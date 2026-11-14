@@ -50,7 +50,7 @@ class DescriptorStartupTest {
         try (URLClassLoader classLoader = new URLClassLoader(
                 new URL[] {extraClasspath.toUri().toURL()},
                 Thread.currentThread().getContextClassLoader())) {
-            assertThatThrownBy(() -> SeedApplication.start(new DefaultResourceLoader(classLoader), url, "10"))
+            assertThatThrownBy(() -> SeedApplication.start(new DefaultResourceLoader(classLoader), url, "10000"))
                     .hasStackTraceContaining("sem-versoes.json");
         }
 

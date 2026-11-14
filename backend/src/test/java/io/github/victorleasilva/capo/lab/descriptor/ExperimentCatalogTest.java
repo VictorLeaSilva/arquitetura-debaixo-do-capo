@@ -33,6 +33,9 @@ class ExperimentCatalogTest {
     @TempDir
     Path classpath;
 
+    @TempDir
+    Path secondRoot;
+
     @Test
     void loadsAValidDescriptor() {
         ExperimentCatalog catalog = load("valido", base("valido"));
@@ -104,6 +107,72 @@ class ExperimentCatalogTest {
     }
 
     @Test
+    void parameterNamesMustBeUnique() {
+        assertRejected(
+                "parametro-repetido",
+                d -> ((ObjectNode) d.get("parameters").get(1)).put("name", "sizes"),
+                "/parameters");
+    }
+
+    @Test
+    void measurementIdsMustBeUnique() {
+        assertRejected(
+                "medicao-repetida",
+                d -> ((ArrayNode) d.get("measurements"))
+                        .add(MAPPER.createObjectNode()
+                                .put("id", "durationMs")
+                                .put("label", "De novo")
+                                .put("unit", "ms")),
+                "/measurements");
+    }
+
+    /** Q-040: nomes de parâmetro e ids de medição em camelCase, porque viram chaves de JSON na API. */
+    @Test
+    void parameterNameMustBeCamelCase() {
+        assertRejected(
+                "nome-invalido",
+                d -> ((ObjectNode) d.get("parameters").get(1)).put("name", "repetições extras"),
+                "/parameters/1/name");
+    }
+
+    @Test
+    void measurementIdMustBeCamelCase() {
+        assertRejected(
+                "medicao-invalida",
+                d -> ((ObjectNode) d.get("measurements").get(0)).put("id", "Duração"),
+                "/measurements/0/id");
+    }
+
+    @Test
+    void unknownFieldInsideAVariantIsRejected() {
+        assertRejected(
+                "campo-extra-na-versao",
+                d -> ((ObjectNode) d.get("variants").get(0)).put("foo", "bar"),
+                "/variants/0/foo");
+    }
+
+    @Test
+    void unknownFieldInsideTheChartIsRejected() {
+        assertRejected("campo-extra-no-grafico", d -> ((ObjectNode) d.get("chart")).put("foo", "bar"), "/chart/foo");
+    }
+
+    /** O mesmo descritor em duas raízes do classpath (dois jars, por exemplo) dá dois experimentos com o mesmo id. */
+    @Test
+    void experimentIdMustBeUniqueAcrossFiles() throws IOException {
+        load("repetido", base("repetido"));
+        Path copy = Files.createDirectories(secondRoot.resolve("lab/experiments"));
+        Files.copy(classpath.resolve("lab/experiments/repetido.json"), copy.resolve("repetido.json"));
+
+        try (URLClassLoader both = new URLClassLoader(
+                new URL[] {classpath.toUri().toURL(), secondRoot.toUri().toURL()}, null)) {
+            assertThatThrownBy(() -> new ExperimentCatalog(new PathMatchingResourcePatternResolver(both), MAPPER))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("repetido.json: /id")
+                    .hasMessageContaining("já existe");
+        }
+    }
+
+    @Test
     void realDescriptorsLoad() {
         ExperimentCatalog catalog = new ExperimentCatalog(new PathMatchingResourcePatternResolver(), MAPPER);
         assertThat(catalog.all())
@@ -169,7 +238,12 @@ class ExperimentCatalogTest {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return new ExperimentCatalog(new PathMatchingResourcePatternResolver(isolatedClassLoader()), MAPPER);
+        // O catálogo só lê os arquivos na construção, então o class loader pode ser fechado em seguida.
+        try (URLClassLoader loader = isolatedClassLoader()) {
+            return new ExperimentCatalog(new PathMatchingResourcePatternResolver(loader), MAPPER);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /** Só o diretório temporário, sem o classpath da aplicação (pai {@code null}). */
