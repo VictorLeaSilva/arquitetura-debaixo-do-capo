@@ -38,7 +38,7 @@ class ExperimentApiTest {
         registry.add("spring.datasource.url", () -> url);
         registry.add("spring.datasource.username", PostgresTestDatabase::username);
         registry.add("spring.datasource.password", PostgresTestDatabase::password);
-        registry.add("LAB_SEED_PRODUCTS", () -> "10");
+        registry.add("LAB_SEED_PRODUCTS", () -> "10000");
     }
 
     @Autowired
