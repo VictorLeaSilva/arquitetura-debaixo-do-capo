@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "list-intersection",
+  "title": "Interseção de listas",
+  "summary": "Quantos itens de um lote existem no catálogo? A mesma pergunta respondida com uma busca linear, com busca binária numa lista ordenada e com um HashSet, para ver o custo de O(n²), O(n log n) e O(n) crescendo com o tamanho.",
+  "studyPage": "experimentos/list-intersection.mdx",
+  "fairness": "same-result",
+  "variants": [
+    {
+      "id": "bad",
+      "label": "Busca linear (contains)",
+      "description": "Para cada SKU do lote, percorre a lista do catálogo do começo ao fim com List.contains. Com n itens no lote e n no catálogo, são até n × n comparações.",
+      "complexity": "O(n²)",
+      "maxSize": 20000
+    },
+    {
+      "id": "medium",
+      "label": "Lista ordenada e busca binária",
+      "description": "Ordena uma cópia do catálogo uma vez e procura cada SKU com Collections.binarySearch, que corta o espaço de busca pela metade a cada passo.",
+      "complexity": "O(n log n)",
+      "maxSize": 1000000
+    },
+    {
+      "id": "good",
+      "label": "HashSet",
+      "description": "Coloca o catálogo num HashSet uma vez e testa cada SKU com contains, que em média encontra o item sem percorrer os outros.",
+      "complexity": "O(n)",
+      "maxSize": 1000000
+    }
+  ],
+  "parameters": [
+    {
+      "name": "sizes",
+      "label": "Tamanhos (itens no catálogo e no lote)",
+      "type": "integer-set",
+      "default": [1000, 5000, 10000, 20000],
+      "allowed": [1000, 5000, 10000, 20000, 100000, 1000000],
+      "isSize": true
+    },
+    {
+      "name": "repetitions",
+      "label": "Repetições por tamanho",
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 10
+    }
+  ],
+  "measurements": [
+    { "id": "durationMsMedian", "label": "Duração (mediana)", "unit": "ms" },
+    { "id": "durationMsMin", "label": "Duração (mínima)", "unit": "ms" },
+    { "id": "durationMsMax", "label": "Duração (máxima)", "unit": "ms" },
+    { "id": "matches", "label": "Itens encontrados", "unit": "itens" }
+  ],
+  "chart": { "x": "sizes", "y": "durationMsMedian", "scale": "log" },
+  "verificationQuestions": [
+    "Por que dobrar o tamanho mais ou menos quadruplica o tempo da versão com List.contains?",
+    "A versão com busca binária ordena o catálogo uma vez. Por que esse custo não aparece a cada SKU procurado?",
+    "Em que situação um HashSet deixaria de ser a melhor escolha para esta pergunta?",
+    "Por que as três versões precisam encontrar exatamente os mesmos itens para que a comparação de tempo seja justa?"
+  ]
+}

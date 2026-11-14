@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Sobe a aplicação inteira, sem servidor web, apontando para um banco de teste. Subir de novo no mesmo banco é o
@@ -19,15 +20,27 @@ public final class SeedApplication {
     private SeedApplication() {}
 
     public static ConfigurableApplicationContext start(String jdbcUrl, String seedProducts, Class<?>... extraSources) {
+        return start(null, jdbcUrl, seedProducts, extraSources);
+    }
+
+    /**
+     * Igual ao outro {@code start}, com um {@link ResourceLoader} próprio: o teste pode pôr arquivos extras no
+     * classpath que a aplicação enxerga (por exemplo, um descritor de experimento inválido).
+     */
+    public static ConfigurableApplicationContext start(
+            ResourceLoader resourceLoader, String jdbcUrl, String seedProducts, Class<?>... extraSources) {
         List<Class<?>> sources = new ArrayList<>();
         sources.add(CapoApplication.class);
         sources.addAll(List.of(extraSources));
-        return new SpringApplicationBuilder(sources.toArray(Class<?>[]::new))
-                .web(WebApplicationType.NONE)
-                .run(
-                        "--spring.datasource.url=" + jdbcUrl,
-                        "--spring.datasource.username=" + PostgresTestDatabase.username(),
-                        "--spring.datasource.password=" + PostgresTestDatabase.password(),
-                        "--LAB_SEED_PRODUCTS=" + seedProducts);
+        SpringApplicationBuilder builder =
+                new SpringApplicationBuilder(sources.toArray(Class<?>[]::new)).web(WebApplicationType.NONE);
+        if (resourceLoader != null) {
+            builder.resourceLoader(resourceLoader);
+        }
+        return builder.run(
+                "--spring.datasource.url=" + jdbcUrl,
+                "--spring.datasource.username=" + PostgresTestDatabase.username(),
+                "--spring.datasource.password=" + PostgresTestDatabase.password(),
+                "--LAB_SEED_PRODUCTS=" + seedProducts);
     }
 }
