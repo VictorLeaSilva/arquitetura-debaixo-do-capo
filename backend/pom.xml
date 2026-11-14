@@ -30,6 +30,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- Migrações com Flyway (D-14); traz também o spring-boot-starter-jdbc (JdbcClient e transações). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+        </dependency>
+        <!-- O suporte ao PostgreSQL saiu do núcleo do Flyway desde a linha 10. -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,6 +60,12 @@
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
             <version>1.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- PostgreSQL real nos testes de integração (04 §3: nada de banco em memória). -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -171,6 +192,8 @@
                     <effort>Max</effort>
                     <includeTests>false</includeTests>
                     <failOnError>true</failOnError>
+                    <!-- Q-036: exceções do SpotBugs, com motivo, tarefa e validade (04 §5). -->
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                 </configuration>
                 <executions>
                     <execution>

@@ -73,7 +73,9 @@ docker compose --profile mvp down -v
 
 ## Como compilar e testar o backend
 
-Pré-requisito: **JDK 25** instalado (qualquer distribuição). Não é preciso instalar o Maven: o *Maven Wrapper* (`mvnw`) baixa a versão certa na primeira execução.
+Pré-requisitos: **JDK 25** instalado (qualquer distribuição) e o **Docker rodando** (no Windows, o Docker Desktop aberto). Não é preciso instalar o Maven: o *Maven Wrapper* (`mvnw`) baixa a versão certa na primeira execução.
+
+O Docker é necessário porque os testes de integração usam um PostgreSQL 18.6 de verdade, e não um banco em memória: o *Testcontainers* sobe um container `postgres:18.6-trixie` no começo dos testes e o apaga no fim. Na primeira vez, ele baixa a imagem (algumas centenas de MB). Com o Docker parado, os testes que usam o banco falham com uma mensagem como `Could not find a valid Docker environment`.
 
 No bash (Linux, macOS ou Git Bash no Windows):
 
@@ -89,7 +91,7 @@ cd backend
 .\mvnw.cmd -q verify
 ```
 
-O `-q` (*quiet*) esconde o log normal do Maven, mas não o da aplicação: durante os testes, o Spring Boot sobe e imprime algumas linhas de log próprias. O comando deu certo quando termina com código de saída `0` (confira com `echo $?` no bash ou `$LASTEXITCODE` no PowerShell) e sem nenhuma linha `[ERROR]`.
+O `-q` (*quiet*) esconde o log normal do Maven, mas não o da aplicação: os testes sobem a aplicação mais de uma dezena de vezes (uma por cenário da carga de dados), e cada subida imprime o próprio log, além das linhas do Testcontainers sobre o Docker. A saída passa de mil linhas. Entre elas aparecem algumas linhas `ERROR ... Application run failed`, **de propósito**: são os testes que conferem que a aplicação se recusa a subir com um `LAB_SEED_PRODUCTS` inválido ou quando a carga falha no meio. O comando deu certo quando termina com código de saída `0` (confira com `echo $?` no bash ou `$LASTEXITCODE` no PowerShell) e sem nenhuma linha `[ERROR]` (com colchetes: é assim que o Maven marca um erro do build).
 
 O `verify` não só compila e testa: ele também **reprova o build** quando encontra:
 
