@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capo:experiment-descriptor:1",
+  "title": "Descritor de experimento do laboratório",
+  "description": "Contrato de 03 §4: cada experimento é um arquivo JSON em lab/experiments/, validado na inicialização (D-05).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "title",
+    "summary",
+    "studyPage",
+    "fairness",
+    "variants",
+    "parameters",
+    "measurements",
+    "verificationQuestions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]{3,50}$" },
+    "title": { "$ref": "#/$defs/text" },
+    "summary": { "$ref": "#/$defs/text" },
+    "studyPage": { "type": "string", "pattern": "^experimentos/[a-z0-9-]+\\.mdx?$" },
+    "fairness": { "enum": ["same-result", "demonstrates-error"] },
+    "evidenceMeasurement": { "type": "string", "minLength": 1 },
+    "variants": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/variant" }
+    },
+    "parameters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/parameter" },
+      "contains": {
+        "type": "object",
+        "properties": { "isSize": { "const": true } },
+        "required": ["isSize"]
+      },
+      "minContains": 0,
+      "maxContains": 1
+    },
+    "measurements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/measurement" }
+    },
+    "chart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "scale"],
+      "properties": {
+        "x": { "type": "string", "minLength": 1 },
+        "y": { "type": "string", "minLength": 1 },
+        "scale": { "enum": ["linear", "log"] }
+      }
+    },
+    "verificationQuestions": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/text" }
+    }
+  },
+  "if": {
+    "properties": { "fairness": { "const": "demonstrates-error" } },
+    "required": ["fairness"]
+  },
+  "then": { "required": ["evidenceMeasurement"] },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "description"],
+      "properties": {
+        "id": { "enum": ["bad", "medium", "good"] },
+        "label": { "$ref": "#/$defs/text" },
+        "description": { "$ref": "#/$defs/text" },
+        "complexity": { "$ref": "#/$defs/text" },
+        "sourceRef": { "type": "string", "pattern": "^backend/src/main/java/.+\\.java$" },
+        "maxSize": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "label", "type", "default"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]{0,49}$" },
+        "label": { "$ref": "#/$defs/text" },
+        "type": { "enum": ["integer", "integer-set"] },
+        "default": {
+          "oneOf": [
+            { "type": "integer" },
+            { "type": "array", "items": { "type": "integer" }, "minItems": 1, "uniqueItems": true }
+          ]
+        },
+        "min": { "type": "integer" },
+        "max": { "type": "integer" },
+        "allowed": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "uniqueItems": true },
+        "isSize": { "type": "boolean" }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]{0,49}$" },
+        "label": { "$ref": "#/$defs/text" },
+        "unit": { "$ref": "#/$defs/text" }
+      }
+    }
+  }
+}

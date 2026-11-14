@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "test-fictional",
+  "title": "Experimento fictício",
+  "summary": "Um quarto experimento que só existe nos testes, para provar que a tela e a API funcionam com qualquer descritor.",
+  "studyPage": "experimentos/test-fictional.mdx",
+  "fairness": "same-result",
+  "variants": [
+    { "id": "bad", "label": "Versão A", "description": "Primeira versão fictícia." },
+    { "id": "good", "label": "Versão B", "description": "Segunda versão fictícia." }
+  ],
+  "parameters": [
+    {
+      "name": "sizes",
+      "label": "Tamanhos",
+      "type": "integer-set",
+      "default": [1, 2],
+      "allowed": [1, 2, 3],
+      "isSize": true
+    }
+  ],
+  "measurements": [{ "id": "score", "label": "Pontuação", "unit": "pontos" }],
+  "chart": { "x": "sizes", "y": "score", "scale": "linear" },
+  "verificationQuestions": [
+    "Pergunta fictícia um?",
+    "Pergunta fictícia dois?",
+    "Pergunta fictícia três?"
+  ]
+}

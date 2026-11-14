@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "flash-sale-last-units",
+  "title": "Últimas unidades da flash sale",
+  "summary": "Centenas de compradores tentam levar as últimas unidades ao mesmo tempo. Na versão ingênua, quem lê o estoque e grava depois vende mais do que existe; na versão correta, um UPDATE condicional nunca deixa o estoque ficar negativo.",
+  "studyPage": "experimentos/flash-sale-last-units.mdx",
+  "fairness": "demonstrates-error",
+  "evidenceMeasurement": "oversold",
+  "variants": [
+    {
+      "id": "bad",
+      "label": "Ler e depois gravar",
+      "description": "Lê o estoque numa transação, espera a janela de corrida sem conexão e grava o estoque lido menos 1 em outra transação. Duas compras que leem o mesmo valor vendem a mesma unidade."
+    },
+    {
+      "id": "good",
+      "label": "UPDATE condicional",
+      "description": "Um único comando diminui o estoque só se ainda houver unidade disponível. O banco decide, linha por linha, quem leva a última unidade."
+    }
+  ],
+  "parameters": [
+    {
+      "name": "initialStock",
+      "label": "Estoque inicial",
+      "type": "integer",
+      "default": 10,
+      "min": 1,
+      "max": 100
+    },
+    {
+      "name": "buyers",
+      "label": "Compradores simultâneos",
+      "type": "integer",
+      "default": 1000,
+      "min": 10,
+      "max": 2000
+    },
+    {
+      "name": "raceWindowMs",
+      "label": "Janela de corrida da versão ingênua (ms)",
+      "type": "integer",
+      "default": 1,
+      "allowed": [0, 1, 5]
+    }
+  ],
+  "measurements": [
+    { "id": "unitsSold", "label": "Unidades vendidas", "unit": "unidades" },
+    { "id": "oversold", "label": "Vendidas além do estoque", "unit": "unidades" },
+    { "id": "finalAvailable", "label": "Estoque final", "unit": "unidades" },
+    { "id": "rejectedSoldOut", "label": "Compras recusadas por estoque esgotado", "unit": "unidades" },
+    { "id": "durationMs", "label": "Duração", "unit": "ms" },
+    { "id": "latencyP95Ms", "label": "Latência p95 por compra", "unit": "ms" },
+    { "id": "purchasesPerSecond", "label": "Compras por segundo", "unit": "compras/s" }
+  ],
+  "verificationQuestions": [
+    "Por que a versão ingênua vende mais do que existe mesmo com cada transação correta isoladamente?",
+    "Por que o UPDATE condicional não precisa de uma trava explícita no código Java?",
+    "O que acontece com o erro da versão ingênua quando a janela de corrida é 0? Ele desaparece?",
+    "Por que o tamanho do pool de conexões limita quantas compras gravam ao mesmo tempo?"
+  ]
+}

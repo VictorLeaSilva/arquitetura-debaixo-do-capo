@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "n-plus-one",
+  "title": "Consultas N+1",
+  "summary": "Uma página de produtos com os atributos de cada um, buscada de três jeitos: um comando SQL por produto, comandos em lotes e um único comando com JOIN. O número de comandos enviados ao banco conta a história.",
+  "studyPage": "experimentos/n-plus-one.mdx",
+  "fairness": "same-result",
+  "variants": [
+    {
+      "id": "bad",
+      "label": "Relação preguiçosa (N+1)",
+      "description": "Busca a página de produtos e, ao ler os atributos de cada um, o Hibernate envia um comando SQL por produto: 1 para a página e mais 1 por produto.",
+      "complexity": "1 + n consultas"
+    },
+    {
+      "id": "medium",
+      "label": "Busca em lotes",
+      "description": "A mesma consulta, com batch fetching de tamanho 25: os atributos chegam em lotes de até 25 produtos por comando.",
+      "complexity": "1 + ⌈n/25⌉ consultas"
+    },
+    {
+      "id": "good",
+      "label": "Uma consulta com JOIN",
+      "description": "Um único comando junta produtos e atributos e devolve direto os dados de que a página precisa, sem passar pelas entidades.",
+      "complexity": "1 consulta"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "pageSizes",
+      "label": "Tamanhos da página (produtos)",
+      "type": "integer-set",
+      "default": [10, 50, 100, 500],
+      "allowed": [10, 50, 100, 500],
+      "isSize": true
+    },
+    {
+      "name": "repetitions",
+      "label": "Repetições por tamanho",
+      "type": "integer",
+      "default": 5,
+      "min": 1,
+      "max": 10
+    }
+  ],
+  "measurements": [
+    { "id": "sqlStatements", "label": "Comandos SQL", "unit": "comandos" },
+    { "id": "durationMsMedian", "label": "Duração (mediana)", "unit": "ms" },
+    { "id": "durationMsMin", "label": "Duração (mínima)", "unit": "ms" },
+    { "id": "durationMsMax", "label": "Duração (máxima)", "unit": "ms" },
+    { "id": "products", "label": "Produtos na página", "unit": "itens" },
+    { "id": "attributes", "label": "Atributos lidos", "unit": "itens" }
+  ],
+  "chart": { "x": "pageSizes", "y": "sqlStatements", "scale": "linear" },
+  "verificationQuestions": [
+    "De onde vem o \"+1\" e de onde vem o \"N\" no nome do problema?",
+    "Por que o batch fetching reduz o número de comandos sem mudar o código que lê os atributos?",
+    "Por que JOIN FETCH com paginação pode ser pior do que parece?",
+    "Por que o número de comandos SQL é uma medida mais estável do que o tempo neste experimento?"
+  ]
+}

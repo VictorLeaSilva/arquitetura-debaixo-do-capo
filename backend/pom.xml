@@ -45,6 +45,12 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Q-037: valida os descritores de experimento contra o JSON Schema 2020-12 (usa o Jackson 3). -->
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>3.0.9</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
