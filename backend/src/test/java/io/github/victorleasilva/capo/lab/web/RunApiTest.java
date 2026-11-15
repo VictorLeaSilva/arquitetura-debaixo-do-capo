@@ -103,6 +103,16 @@ class RunApiTest {
                 .isEqualTo("COMPLETED");
     }
 
+    /** O valor pedido vence o padrão do descritor (o padrão de sizes no test-fictional é [1, 2]). */
+    @Test
+    void requestedValueOverridesTheDefault() throws Exception {
+        JsonNode body = json(run("test-fictional", "{\"variants\":[\"good\"],\"parameters\":{\"sizes\":[3]}}"));
+
+        assertThat(body.get("parameters")).isEqualTo(MAPPER.readTree("{\"sizes\":[3]}"));
+        assertThat(body.get("results")).hasSize(1);
+        assertThat(body.get("results").get(0).get("size").asInt()).isEqualTo(3);
+    }
+
     @Test
     @Tag("RF-004")
     void getReturnsTheSameBodyAsThePost() throws Exception {

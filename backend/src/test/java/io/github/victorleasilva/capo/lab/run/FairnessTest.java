@@ -35,6 +35,20 @@ class FairnessTest {
         assertThat(fairness).isEqualTo(new Fairness("same-result", false));
     }
 
+    /** O nulo primeiro: sem a regra do nulo, ele viraria o checksum de referência e o "a" pareceria diferente só por acaso. */
+    @Test
+    void aMissingChecksumFirstIsNotSameResult() {
+        Fairness fairness = Fairness.of("same-result", List.of(result("bad", 1, null), result("good", 1, "a")));
+        assertThat(fairness).isEqualTo(new Fairness("same-result", false));
+    }
+
+    /** Todos nulos: nada foi comparado, então não há prova de comparação justa. */
+    @Test
+    void allChecksumsMissingIsNotSameResult() {
+        Fairness fairness = Fairness.of("same-result", List.of(result("bad", 1, null), result("good", 1, null)));
+        assertThat(fairness).isEqualTo(new Fairness("same-result", false));
+    }
+
     @Test
     void demonstratesErrorHasNoSameResult() {
         Fairness fairness = Fairness.of("demonstrates-error", List.of(result("bad", 1, "a"), result("good", 1, "b")));

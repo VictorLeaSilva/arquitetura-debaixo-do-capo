@@ -1,5 +1,6 @@
 package io.github.victorleasilva.capo.lab.run;
 
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,7 +32,7 @@ public class RunLock {
         try {
             connection = dataSource.getConnection();
             if (call(connection, "SELECT pg_try_advisory_lock(?)")) {
-                return Optional.of(new Held(connection));
+                return Optional.of(new Held(connection, dataSource));
             }
             connection.close();
             return Optional.empty();
@@ -64,9 +65,11 @@ public class RunLock {
     public static final class Held implements AutoCloseable {
 
         private final Connection connection;
+        private final DataSource dataSource;
 
-        private Held(Connection connection) {
+        private Held(Connection connection, DataSource dataSource) {
             this.connection = connection;
+            this.dataSource = dataSource;
         }
 
         @Override
@@ -74,9 +77,20 @@ public class RunLock {
             try {
                 call(connection, "SELECT pg_advisory_unlock(?)");
             } catch (SQLException e) {
+                // Se voltasse ao pool, a conexão continuaria segurando a trava. Retirada do pool (evict), ela é
+                // fechada de verdade, e o PostgreSQL solta a trava ao encerrar a sessão.
+                evictQuietly();
                 throw new DataAccessResourceFailureException("não foi possível liberar a trava de execução", e);
             } finally {
                 closeQuietly(connection);
+            }
+        }
+
+        private void evictQuietly() {
+            try {
+                dataSource.unwrap(HikariDataSource.class).evictConnection(connection);
+            } catch (SQLException ignored) {
+                // a falha original é a que importa
             }
         }
     }
