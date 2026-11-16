@@ -19,7 +19,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
  * O contrato OpenAPI da API do laboratório ({@code openapi/lab-api.yaml}) usado como verificador nos testes (Q-038):
  * os schemas de um OpenAPI 3.1 são JSON Schema 2020-12, então a mesma biblioteca dos descritores valida os corpos.
  */
-final class OpenApiContract {
+public final class OpenApiContract {
 
     static final String DOCUMENT = "classpath:openapi/lab-api.yaml";
     private static final String DESCRIPTOR_SCHEMA_ID = "urn:capo:experiment-descriptor:1";
@@ -27,7 +27,7 @@ final class OpenApiContract {
     private final SchemaRegistry registry;
     private final JsonNode document;
 
-    OpenApiContract() {
+    public OpenApiContract() {
         // O $ref do 200 do detalhe aponta para o schema dos descritores pelo $id dele, sem cópia.
         String descriptorSchema = read("/lab/experiments/experiment.schema.json");
         this.registry = SchemaRegistry.withDefaultDialect(
@@ -41,7 +41,7 @@ final class OpenApiContract {
     }
 
     /** Os erros de validação de {@code body} contra o schema da resposta {@code status} de {@code method path}. */
-    List<String> validate(String path, String method, int status, String mediaType, JsonNode body) {
+    public List<String> validate(String path, String method, int status, String mediaType, JsonNode body) {
         String pointer = "/paths/" + escape(path) + "/" + method + "/responses/" + status + "/content/"
                 + escape(mediaType) + "/schema";
         Schema schema = registry.getSchema(SchemaLocation.of(DOCUMENT + "#" + pointer));
