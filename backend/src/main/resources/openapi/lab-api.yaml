@@ -139,8 +139,9 @@ paths:
       operationId: runExperiment
       summary: Executa um experimento e espera o fim (síncrono, D-03)
       description: >-
-        Uma execução por vez (D-04). A execução fica gravada e pode ser consultada depois pelo id. Os erros de
-        validação do pedido (400, 413 e 422) entram com a T-019.
+        Uma execução por vez (D-04). A execução fica gravada e pode ser consultada depois pelo id. O pedido é validado
+        contra o descritor antes da trava; nenhum erro de validação grava a execução. Precedência dos erros: 404 →
+        413 → 400 → 422 size-exceeds-variant-limit → 422 insufficient-data → 409 (AC-003.10).
       parameters:
         - name: experimentId
           in: path
@@ -212,6 +213,36 @@ paths:
                     fairness:
                       type: same-result
                       sameResult: true
+        "400":
+          description: >-
+            O corpo não é JSON válido (malformed-request), ou as versões ou os parâmetros não passam na validação contra
+            o descritor (invalid-parameter, com um item em errors por campo).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                malformed:
+                  summary: Corpo que não é JSON válido
+                  value:
+                    type: /problems/malformed-request
+                    title: Corpo inválido
+                    status: 400
+                    detail: O corpo do pedido não é um JSON válido.
+                    instance: /api/v1/lab/experiments/list-intersection/runs
+                invalidParameter:
+                  summary: Versão e parâmetro inválidos
+                  value:
+                    type: /problems/invalid-parameter
+                    title: Parâmetro inválido
+                    status: 400
+                    detail: O pedido tem parâmetros inválidos; veja errors.
+                    instance: /api/v1/lab/experiments/list-intersection/runs
+                    errors:
+                      - field: variants
+                        message: versão desconhecida; as versões deste experimento são bad, medium, good
+                      - field: repetitions
+                        message: precisa estar entre 1 e 10
         "404":
           description: Não existe experimento com esse id.
           content:
@@ -242,6 +273,51 @@ paths:
                     status: 409
                     detail: Outra execução está em andamento; tente de novo quando ela terminar.
                     instance: /api/v1/lab/experiments/list-intersection/runs
+        "413":
+          description: O corpo passa de 16 KB (16384 bytes).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                tooLarge:
+                  summary: Corpo acima de 16 KB
+                  value:
+                    type: /problems/payload-too-large
+                    title: Corpo grande demais
+                    status: 413
+                    detail: O corpo do pedido passa de 16 KB (16384 bytes).
+                    instance: /api/v1/lab/experiments/list-intersection/runs
+        "422":
+          description: >-
+            O pedido é válido, mas um tamanho passa do limite de uma versão escolhida (size-exceeds-variant-limit) ou
+            dos produtos carregados (insufficient-data).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                variantLimit:
+                  summary: Tamanho acima do limite da versão
+                  value:
+                    type: /problems/size-exceeds-variant-limit
+                    title: Tamanho acima do limite da versão
+                    status: 422
+                    detail: A versão 'bad' aceita tamanhos até 20000; o pedido tem 100000.
+                    instance: /api/v1/lab/experiments/list-intersection/runs
+                    variant: bad
+                    maxSize: 20000
+                    size: 100000
+                insufficientData:
+                  summary: Tamanho maior que os produtos carregados
+                  value:
+                    type: /problems/insufficient-data
+                    title: Dados insuficientes
+                    status: 422
+                    detail: O tamanho 20000 é maior que os 10000 produtos carregados (LAB_SEED_PRODUCTS).
+                    instance: /api/v1/lab/experiments/list-intersection/runs
+                    size: 20000
+                    seedProducts: 10000
         "500":
           description: A execução falhou e ficou gravada como FAILED. Nunca traz stack trace.
           content:
@@ -376,6 +452,8 @@ components:
       properties:
         variants:
           type: array
+          minItems: 1
+          uniqueItems: true
           items:
             type: string
         parameters:
@@ -501,3 +579,11 @@ components:
                 type: string
         runId:
           type: string
+        variant:
+          type: string
+        maxSize:
+          type: integer
+        size:
+          type: integer
+        seedProducts:
+          type: integer

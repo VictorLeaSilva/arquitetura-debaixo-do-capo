@@ -7,7 +7,6 @@ import io.github.victorleasilva.capo.shared.IdGenerator;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,8 +15,8 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Executa um experimento (A2; D-03: síncrono, no mesmo processo), uma execução por vez (D-04). A validação do pedido
- * (A2, passos 2 a 4) é da T-019, e os spans, da T-015.
+ * Executa um experimento (A2; D-03: síncrono, no mesmo processo), uma execução por vez (D-04). Recebe o pedido já
+ * validado pelo {@link RunRequestValidator} (A2, passos 2 a 4); os spans são da T-015.
  */
 @Component
 public final class RunService {
@@ -59,12 +58,11 @@ public final class RunService {
         }
     }
 
-    /** Executa e devolve a execução como ficou gravada. */
-    public LabRun run(String experimentId, List<String> variants, Map<String, Object> requested) {
+    /** Executa, com as versões e os parâmetros efetivos já validados, e devolve a execução como ficou gravada. */
+    public LabRun run(String experimentId, List<String> variants, Map<String, Object> parameters) {
         ExperimentDescriptor descriptor =
                 catalog.find(experimentId).orElseThrow(() -> new ExperimentNotFoundException(experimentId));
         JsonNode document = mapper.readTree(descriptor.json());
-        Map<String, Object> parameters = effectiveParameters(document, requested);
 
         RunLock.Held held = lock.tryAcquire().orElseThrow(RunInProgressException::new);
         try (held) {
@@ -104,19 +102,6 @@ public final class RunService {
         return catalog.find(experimentId)
                 .map(d -> mapper.readTree(d.json()).get("fairness").asString())
                 .orElseThrow(() -> new ExperimentNotFoundException(experimentId));
-    }
-
-    /** Os parâmetros do pedido, completados com o padrão do descritor para os que faltam (sem validar: T-019). */
-    private Map<String, Object> effectiveParameters(JsonNode document, Map<String, Object> requested) {
-        Map<String, Object> effective = new LinkedHashMap<>();
-        for (JsonNode parameter : document.get("parameters")) {
-            String name = parameter.get("name").asString();
-            Object value = requested.containsKey(name)
-                    ? requested.get(name)
-                    : mapper.treeToValue(parameter.get("default"), Object.class);
-            effective.put(name, value);
-        }
-        return effective;
     }
 
     /** Os valores do parâmetro com {@code isSize}, na ordem do pedido; sem esse parâmetro, uma rodada sem tamanho. */

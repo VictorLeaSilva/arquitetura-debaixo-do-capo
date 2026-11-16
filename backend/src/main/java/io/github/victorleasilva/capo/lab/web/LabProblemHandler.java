@@ -1,8 +1,13 @@
 package io.github.victorleasilva.capo.lab.web;
 
+import io.github.victorleasilva.capo.lab.run.InsufficientDataException;
+import io.github.victorleasilva.capo.lab.run.InvalidParameterException;
+import io.github.victorleasilva.capo.lab.run.ParameterError;
 import io.github.victorleasilva.capo.lab.run.RunFailedException;
 import io.github.victorleasilva.capo.lab.run.RunInProgressException;
+import io.github.victorleasilva.capo.lab.run.SizeExceedsVariantLimitException;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -46,6 +51,63 @@ public class LabProblemHandler {
         return problem;
     }
 
+    @ExceptionHandler(PayloadTooLargeException.class)
+    ProblemDetail payloadTooLarge(PayloadTooLargeException e) {
+        return problem(
+                HttpStatus.CONTENT_TOO_LARGE,
+                "payload-too-large",
+                "Corpo grande demais",
+                "O corpo do pedido passa de 16 KB (16384 bytes).");
+    }
+
+    @ExceptionHandler(MalformedRequestException.class)
+    ProblemDetail malformedRequest(MalformedRequestException e) {
+        return problem(
+                HttpStatus.BAD_REQUEST,
+                "malformed-request",
+                "Corpo inválido",
+                "O corpo do pedido não é um JSON válido.");
+    }
+
+    @ExceptionHandler(InvalidParameterException.class)
+    ProblemDetail invalidParameter(InvalidParameterException e) {
+        ProblemDetail problem = problem(
+                HttpStatus.BAD_REQUEST,
+                "invalid-parameter",
+                "Parâmetro inválido",
+                "O pedido tem parâmetros inválidos; veja errors.");
+        problem.setProperty(
+                "errors", e.errors().stream().map(LabProblemHandler::error).toList());
+        return problem;
+    }
+
+    @ExceptionHandler(SizeExceedsVariantLimitException.class)
+    ProblemDetail sizeExceedsVariantLimit(SizeExceedsVariantLimitException e) {
+        ProblemDetail problem = problem(
+                HttpStatus.UNPROCESSABLE_CONTENT,
+                "size-exceeds-variant-limit",
+                "Tamanho acima do limite da versão",
+                "A versão '" + e.variant() + "' aceita tamanhos até " + e.maxSize() + "; o pedido tem " + e.size()
+                        + ".");
+        problem.setProperty("variant", e.variant());
+        problem.setProperty("maxSize", e.maxSize());
+        problem.setProperty("size", e.size());
+        return problem;
+    }
+
+    @ExceptionHandler(InsufficientDataException.class)
+    ProblemDetail insufficientData(InsufficientDataException e) {
+        ProblemDetail problem = problem(
+                HttpStatus.UNPROCESSABLE_CONTENT,
+                "insufficient-data",
+                "Dados insuficientes",
+                "O tamanho " + e.size() + " é maior que os " + e.seedProducts()
+                        + " produtos carregados (LAB_SEED_PRODUCTS).");
+        problem.setProperty("size", e.size());
+        problem.setProperty("seedProducts", e.seedProducts());
+        return problem;
+    }
+
     @ExceptionHandler(RunInProgressException.class)
     ProblemDetail runInProgress(RunInProgressException e) {
         return problem(
@@ -64,6 +126,14 @@ public class LabProblemHandler {
                 "O motivo está em failureReason, consultando a execução.");
         problem.setProperty("runId", e.runId().toString());
         return problem;
+    }
+
+    /** Um item de errors, com field antes de message. */
+    private static Map<String, String> error(ParameterError error) {
+        Map<String, String> item = new LinkedHashMap<>();
+        item.put("field", error.field());
+        item.put("message", error.message());
+        return item;
     }
 
     private static ProblemDetail problem(HttpStatus status, String type, String title, String detail) {
