@@ -10,6 +10,9 @@ import io.github.victorleasilva.capo.lab.run.ValidatedRun;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,14 +86,21 @@ public class RunController {
         return RunResponse.of(run, runService.fairnessType(run.experimentId()));
     }
 
-    /** O corpo como JSON (UTF-8); vazio, inválido, com sobra depois do valor ou com chave repetida é 400. */
+    /**
+     * O corpo como JSON em UTF-8 estrito (bytes que não são UTF-8 válido, como UTF-16, são 400, sem a detecção
+     * automática do Jackson); vazio, inválido, com sobra depois do valor ou com chave repetida também é 400.
+     */
     private JsonNode parse(byte[] body) {
         if (body.length == 0) {
             throw new MalformedRequestException(null);
         }
         try {
-            return reader.readValue(body);
-        } catch (JacksonException e) {
+            String text = StandardCharsets.UTF_8
+                    .newDecoder()
+                    .decode(ByteBuffer.wrap(body))
+                    .toString();
+            return reader.readValue(text);
+        } catch (CharacterCodingException | JacksonException e) {
             throw new MalformedRequestException(e);
         }
     }

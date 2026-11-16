@@ -139,6 +139,18 @@ class RunValidationApiTest {
         assertThat(labRuns()).isEqualTo(before);
     }
 
+    /** O corpo é UTF-8 estrito: um byte inválido em UTF-8 e um JSON válido em UTF-16 são 400 (T-019, passo 3). */
+    @Test
+    void nonUtf8BodyIs400() throws Exception {
+        byte[] invalidUtf8 = {(byte) 0x7b, (byte) 0xc3, (byte) 0x28, (byte) 0x7d};
+        byte[] utf16 = "{\"variants\":[\"good\"],\"parameters\":{\"sizes\":[1]}}".getBytes(StandardCharsets.UTF_16);
+        for (byte[] body : new byte[][] {invalidUtf8, utf16}) {
+            long before = labRuns();
+            expectProblem(run("test-fictional", body), 400, "malformed-request");
+            assertThat(labRuns()).isEqualTo(before);
+        }
+    }
+
     @Test
     void unknownExperimentIs404() throws Exception {
         long before = labRuns();
@@ -168,6 +180,7 @@ class RunValidationApiTest {
         MvcResult result = run("test-fictional", body);
 
         assertThat(result.getResponse().getStatus()).isEqualTo(201);
+        assertValid(RUNS, "post", 201, json(result));
     }
 
     /** O Content-Type não é conferido (03 §5.1 não declara 415): o corpo é lido como JSON de qualquer forma. */
@@ -179,6 +192,7 @@ class RunValidationApiTest {
                 .andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(201);
+        assertValid(RUNS, "post", 201, json(result));
     }
 
     private JsonNode expectProblem(MvcResult result, int status, String type) throws Exception {

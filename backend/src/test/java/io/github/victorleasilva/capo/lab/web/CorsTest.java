@@ -70,6 +70,7 @@ class CorsTest {
                         .content("{\"variants\":[\"good\"],\"parameters\":{\"sizes\":[1]}}"))
                 .andReturn();
         assertThat(created.getResponse().getStatus()).isEqualTo(201);
+        RunApiTest.assertValid(RUNS, "post", 201, RunApiTest.json(created));
         assertThat(created.getResponse().getHeader(ALLOW_ORIGIN)).isEqualTo(LAB);
         assertThat(created.getResponse().getHeader("Access-Control-Expose-Headers"))
                 .contains("Location");

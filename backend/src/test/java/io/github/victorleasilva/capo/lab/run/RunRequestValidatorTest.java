@@ -259,6 +259,27 @@ class RunRequestValidatorTest {
         assertThat(e.size()).isEqualTo(100000);
     }
 
+    /** Com mais de uma versão acima do limite, o 422 cita a primeira na ordem do pedido. */
+    @Test
+    void theFirstFailingVariantInRequestOrderIsReported() {
+        ExperimentDescriptor limits = descriptor("limits", """
+                {"variants": [{"id": "bad", "maxSize": 10}, {"id": "medium", "maxSize": 5}, {"id": "good"}],
+                 "parameters": [{"name": "sizes", "type": "integer-set", "default": [1], "isSize": true}]}
+                """);
+
+        SizeExceedsVariantLimitException e = catchThrowableOfType(
+                SizeExceedsVariantLimitException.class,
+                () -> validator.validate(
+                        limits,
+                        MAPPER.readTree(
+                                "{\"variants\":[\"good\",\"medium\",\"bad\"],\"parameters\":{\"sizes\":[20]}}")));
+
+        assertThat(e).isNotNull();
+        assertThat(e.variant()).isEqualTo("medium");
+        assertThat(e.maxSize()).isEqualTo(5);
+        assertThat(e.size()).isEqualTo(20);
+    }
+
     @Test
     void sizeAtTheVariantLimitButAboveTheSeedIsInsufficientData() {
         InsufficientDataException e = catchThrowableOfType(
