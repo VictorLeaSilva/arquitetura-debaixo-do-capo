@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "test-failing",
+  "title": "Experimento que falha",
+  "summary": "Só de teste: a execução lança uma exceção (AC-003.9).",
+  "studyPage": "experimentos/test-failing.mdx",
+  "fairness": "same-result",
+  "variants": [
+    { "id": "bad", "label": "Versão A", "description": "Primeira versão de teste." },
+    { "id": "good", "label": "Versão B", "description": "Segunda versão de teste." }
+  ],
+  "parameters": [],
+  "measurements": [{ "id": "score", "label": "Pontuação", "unit": "pontos" }],
+  "verificationQuestions": ["Pergunta de teste um?", "Pergunta de teste dois?", "Pergunta de teste três?"]
+}

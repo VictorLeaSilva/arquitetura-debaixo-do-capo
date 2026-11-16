@@ -46,7 +46,7 @@ class OpenApiContractTest {
                 }
             }
         }
-        assertThat(checked).isEqualTo(3);
+        assertThat(checked).isEqualTo(11);
     }
 
     /** O verificador tem efeito: um corpo fora do contrato é recusado (senão, os testes da API passariam sempre). */

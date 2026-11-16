@@ -56,12 +56,19 @@ class ExperimentApiTest {
 
         List<String> ids = new ArrayList<>();
         body.forEach(item -> ids.add(item.get("id").asString()));
-        // No classpath de teste, o test-fictional (03 §4.1) também aparece, depois dos três do MVP.
-        assertThat(ids).containsExactly("flash-sale-last-units", "list-intersection", "n-plus-one", "test-fictional");
+        // No classpath de teste, os descritores de 03 §4.1 também aparecem, depois dos três do MVP.
+        assertThat(ids)
+                .containsExactly(
+                        "flash-sale-last-units",
+                        "list-intersection",
+                        "n-plus-one",
+                        "test-blocking",
+                        "test-failing",
+                        "test-fictional");
         for (JsonNode item : body) {
             assertThat(item.propertyNames()).containsExactlyInAnyOrder("id", "title", "summary", "studyPage");
             String id = item.get("id").asString();
-            if (!id.equals("test-fictional")) {
+            if (!id.startsWith("test-")) {
                 JsonNode file = descriptorFile(id);
                 assertThat(item.get("title")).isEqualTo(file.get("title"));
                 assertThat(item.get("summary")).isEqualTo(file.get("summary"));

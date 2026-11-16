@@ -2,6 +2,7 @@ package io.github.victorleasilva.capo.lab.seed;
 
 import io.github.victorleasilva.capo.catalog.api.CatalogSeed;
 import io.github.victorleasilva.capo.inventory.api.InventorySeed;
+import io.github.victorleasilva.capo.lab.run.LabRunRepository;
 import io.github.victorleasilva.capo.ordering.api.OrderingSeed;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.TimeGauge;
@@ -37,6 +38,7 @@ public class ReferenceDataSeeder implements ApplicationRunner {
     private final CatalogSeed catalogSeed;
     private final InventorySeed inventorySeed;
     private final OrderingSeed orderingSeed;
+    private final LabRunRepository labRuns;
     private final AtomicLong lastDurationMs = new AtomicLong();
 
     public ReferenceDataSeeder(
@@ -46,13 +48,15 @@ public class ReferenceDataSeeder implements ApplicationRunner {
             MeterRegistry meterRegistry,
             CatalogSeed catalogSeed,
             InventorySeed inventorySeed,
-            OrderingSeed orderingSeed) {
+            OrderingSeed orderingSeed,
+            LabRunRepository labRuns) {
         this.environment = environment;
         this.transaction = transaction;
         this.clock = clock;
         this.catalogSeed = catalogSeed;
         this.inventorySeed = inventorySeed;
         this.orderingSeed = orderingSeed;
+        this.labRuns = labRuns;
         // Exposto pelo Prometheus como lab_seed_duration_seconds; vale 0 até a primeira carga (RNF-008).
         TimeGauge.builder("lab.seed.duration", lastDurationMs, TimeUnit.MILLISECONDS, AtomicLong::doubleValue)
                 .register(meterRegistry);
@@ -60,6 +64,8 @@ public class ReferenceDataSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        // A1, passo 2 (AC-004.4): uma execução RUNNING deixada por uma queda vira FAILED antes de tudo.
+        labRuns.failOrphans();
         int products = SeedSettings.parse(environment.getProperty(SeedSettings.KEY));
 
         if (catalogSeed.countProducts() == products) {

@@ -3,7 +3,7 @@ package io.github.victorleasilva.capo.lab.seed;
 /** Leitura do tamanho da carga, a variável {@code LAB_SEED_PRODUCTS} (A1, passo 1). */
 public final class SeedSettings {
 
-    static final String KEY = "LAB_SEED_PRODUCTS";
+    public static final String KEY = "LAB_SEED_PRODUCTS";
     static final int DEFAULT_PRODUCTS = 1_000_000;
     private static final int MIN_PRODUCTS = 1;
     private static final int MAX_PRODUCTS = 1_000_000;

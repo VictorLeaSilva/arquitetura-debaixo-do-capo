@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "test-blocking",
+  "title": "Experimento que segura a trava",
+  "summary": "Só de teste: a execução espera um sinal do teste, com a trava segura (AC-003.8).",
+  "studyPage": "experimentos/test-blocking.mdx",
+  "fairness": "same-result",
+  "variants": [
+    { "id": "bad", "label": "Versão A", "description": "Primeira versão de teste." },
+    { "id": "good", "label": "Versão B", "description": "Segunda versão de teste." }
+  ],
+  "parameters": [],
+  "measurements": [{ "id": "score", "label": "Pontuação", "unit": "pontos" }],
+  "verificationQuestions": ["Pergunta de teste um?", "Pergunta de teste dois?", "Pergunta de teste três?"]
+}
