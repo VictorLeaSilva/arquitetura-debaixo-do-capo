@@ -220,7 +220,7 @@ Corpo do `POST`: `{"variants": ["bad","good"], "parameters": {"sizes": [1000, 50
 
 Corpo de sucesso (201 e 200): `id`, `experimentId`, `status`, `startedAt`, `finishedAt`, `traceId`, `environment`, `parameters` (efetivos), `results[]` = `{variant, size?, measurements: {<id>: número}, checksum?}`, `fairness` = `{type, sameResult?}` e `failureReason` (só em `FAILED`).
 
-CORS: só a origem `http://localhost:5173` é permitida (AC-RNF-009.4).
+CORS: só a origem `http://localhost:5173` é permitida (AC-RNF-009.4), em `/api/**`, com os métodos `GET` e `POST`, o header `Content-Type` e o `Location` exposto. Uma requisição de outra origem recebe o `403` padrão do Spring, sem o header (Q-045).
 
 ### 5.1 Erros (`application/problem+json`, D-12)
 | Status | `type` | Quando |
@@ -231,8 +231,8 @@ CORS: só a origem `http://localhost:5173` é permitida (AC-RNF-009.4).
 | 404 | `/problems/run-not-found` | Execução inexistente |
 | 409 | `/problems/run-in-progress` | Outra execução segura a trava (D-04) |
 | 413 | `/problems/payload-too-large` | Corpo acima de 16 KB [meta] |
-| 422 | `/problems/size-exceeds-variant-limit` | Tamanho acima de `maxSize` de uma versão escolhida |
-| 422 | `/problems/insufficient-data` | Tamanho maior que os produtos carregados |
+| 422 | `/problems/size-exceeds-variant-limit` | Tamanho acima de `maxSize` de uma versão escolhida. Inclui `variant`, `maxSize` e `size` (Q-044) |
+| 422 | `/problems/insufficient-data` | Tamanho maior que os produtos carregados. Inclui `size` e `seedProducts` (Q-044) |
 | 500 | `/problems/run-failed` | Exceção durante a execução. Inclui `runId`; nunca o stack trace |
 
 Precedência: `404` → `413` → `400` → `422 size-exceeds-variant-limit` → `422 insufficient-data` → `409` (AC-003.10).
