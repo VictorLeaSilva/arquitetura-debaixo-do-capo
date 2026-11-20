@@ -46,6 +46,22 @@ class IntersectionTest {
         assertThat(new HashSetIntersection().found(CATALOG, batch)).isEqualTo(expected);
     }
 
+    /**
+     * Um catálogo fora de ordem e um SKU que fica na posição 0 da cópia ordenada: pega a {@code medium} sem o
+     * {@code Collections.sort} e com {@code > 0} no lugar de {@code >= 0} (o catálogo dos outros testes já vem em ordem).
+     */
+    @Test
+    void versionsHandleAnUnsortedCatalogAndTheFirstSortedSku() {
+        List<String> catalog = List.of("SKU-c", "SKU-a", "SKU-b");
+        List<String> batch = List.of("SKU-a", "MISS-1", "SKU-c", "SKU-b");
+
+        for (Intersection version : ListIntersectionRunner.VERSIONS.values()) {
+            assertThat(version.found(catalog, batch))
+                    .as(version.getClass().getSimpleName())
+                    .containsExactly("SKU-a", "SKU-c", "SKU-b");
+        }
+    }
+
     @Test
     void batchHasHalfExistingWithoutRepetitionAndHalfMissing() {
         List<String> batch = IntersectionBatch.of(CATALOG);
