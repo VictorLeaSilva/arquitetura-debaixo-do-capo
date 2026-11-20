@@ -86,6 +86,19 @@ class ExperimentCatalogTest {
                 "dois-tamanhos", d -> ((ObjectNode) d.get("parameters").get(1)).put("isSize", true), "/parameters");
     }
 
+    /** Q-046: o tamanho é uma lista de valores; um integer com isSize daria 500 no motor e no validador. */
+    @Test
+    void sizeParameterMustBeAnIntegerSet() {
+        assertRejected(
+                "tamanho-inteiro",
+                d -> {
+                    ((ObjectNode) d.get("parameters").get(0)).remove("isSize");
+                    ((ObjectNode) d.get("parameters").get(1)).put("isSize", true);
+                    d.remove("chart");
+                },
+                "/parameters/1");
+    }
+
     @Test
     void chartXMustBeTheSizeParameter() {
         assertRejected("grafico-x", d -> ((ObjectNode) d.get("chart")).put("x", "repetitions"), "/chart/x");

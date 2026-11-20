@@ -24,7 +24,10 @@ public final class PostgresTestDatabase {
 
     private static synchronized PostgreSQLContainer container() {
         if (container == null) {
-            container = new PostgreSQLContainer(IMAGE);
+            // Cada classe @SpringBootTest tem banco e contexto próprios, guardados em cache pelo Spring, com um pool de
+            // 10 conexões cada; o limite padrão de 100 do PostgreSQL acabava no meio da suíte (T-013).
+            container = new PostgreSQLContainer(IMAGE)
+                    .withCommand("postgres", "-c", "fsync=off", "-c", "max_connections=500");
             container.start();
         }
         return container;

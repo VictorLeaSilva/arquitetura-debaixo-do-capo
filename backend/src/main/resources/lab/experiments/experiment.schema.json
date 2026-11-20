@@ -101,7 +101,9 @@
         "max": { "type": "integer" },
         "allowed": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "uniqueItems": true },
         "isSize": { "type": "boolean" }
-      }
+      },
+      "if": { "properties": { "isSize": { "const": true } }, "required": ["isSize"] },
+      "then": { "properties": { "type": { "const": "integer-set" } } }
     },
     "measurement": {
       "type": "object",
